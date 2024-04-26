@@ -1,0 +1,15 @@
+# 端口
+server:
+  port: 9121
+
+# 服务名
+spring:
+  application:
+    name: eureka-server
+
+# eureka 地址信息
+eureka:
+  client:
+    service-url:
+        defaultZone: http://127.0.0.1:9121/eureka/
+
