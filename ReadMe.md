@@ -1,4 +1,4 @@
-# 远程服务调用
+#  远程服务调用
 
 传统模式中，想要提供远程调用，Spring中提供了RestTemplate, 用来发送http请求
 
@@ -392,30 +392,343 @@ spring:
 ```
 根据服务名+开发环境+文件后缀，构成统一配置管理中的serverName-dev.yaml文件
 
-### 配置更新
+### 配置热更新
+
+项目发布后，修改统一配置文件后，应完成配置的自动更新
+
+**方式一：**
+
+在使用@Value注解的类上添加@RefreshScope，当配置文件发生变化时，自动刷新
+```java
+@RefreshScope
+public class XxxController {
+    @Value("${xxx}")
+    private String xxx;
+}
+```
+当配置文件发生变化时，系统将感知到变化，更新配置
+
+**方式二：**
+
+使用配置类完成配置文件属性映射
+
+```java
+import java.beans.BeanProperty;
+
+@Component
+@ConfigurationProperties(prefix = "yyy")
+public class PropertiesConfig {
+    private String xxx;
+}
+```
+
+### 配置共享
+
+微服务启动时会从nacos中读取多个配置文件
+- [sping.application.name]-[spring.profiles.active].yaml
+- [spring.application.name].yaml
+其中[spring.application.name].yaml 文件一定会加载，若[spring.profiles.active]不存在时，
+spring启动也会加载，所以可将公共配置放入其中
+
+若[spring.application.name]-[spring.profiles.active].yaml、[spring.application.name].yaml、和本地配置文件存在相同配置时，
+优先级为：[spring.application.name]-[spring.profiles.active].yaml > [spring.application.name].yaml > 本地配置文件
+
+## nacos集群搭建
+
+为让Nacos在线上时高可用，需要配置集群
+
+```
+1. 数据库配置
+2. Nacos配置
+3. Nginx负载均衡
+4. 修改代码配置文件
+```
+
+Nacos配置：
+
+- 在conf中，修改配置文件cluster.conf.example，将文件名修改为cluster.conf
+- 添加集群中每个节点信息
+  - 192.168.1.2 8818
+  - 192.168.1.2 8819
+  - 192.168.1.2 8817
+- 打开数据库配置
+  - spring.datasource.platform = mysql
+  - 数据库配置信息
+
+Nginx配置
+  - 修改conf/nginx.conf
+    ```xml
+    upstream nacos-cluster {
+      server 192.168.1.2:8818
+      ...
+    }
+    server {
+      listen 80;
+      server_name localhost;
+      location /nacos {
+      proxy_pass http://nacos-cluster;
+    }
+    ```
+
+修改代码配置文件
+  - 修改nacos配置文件中的server-addr为nginx地址
 
 
+# Feign
+
+传统http请求，采用硬编码方式
+
+```java
+String url = "http://ip+port/api";
+User user = restTemplate.getForObject(url,User.class);
+```
+
+使用ribbon优化
+
+```java
+String url = "http://serverName/api";
+User user = restTemplate.getForObject(url,User.class);
+```
+
+依然存在的问题
+
+- 可读性差，编程体验不统一
+- 若请求参数复杂，难以维护
+
+## 介绍
+
+是一个声明式的http客户端，用于简化http请求
+
+## 使用
+
+**1. 引入依赖**
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+```
+**2. 开启注解**
+```java
+@EnableFeignClients
+// ...
+public class XxxApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(XxxApplication.class, args);
+    }
+}
+```
+**3. 编写feign客户端**
+```java
+// 当order调用user服务时，使用feign
+@FeignClient(name = "user-service")
+public interface UserFeignClient {
+    @GetMapping("/user/{id}")
+    User getUser(@PathVariable("id") Long id);
+}
+```
+
+在远程调用时，还做到了负载均衡，feign中已集成了ribbon
+
+## 自定义配置
+
+Feign运行自定义配置
+
+| 类型                | 作用         |                             |
+| ------------------- | ------------ |-----------------------------|
+| feign.Logger.Level  | 日志级别     | NONE，BASEIC，HEADERS，FULL    |
+| feign.codec.Decoder | 响应结果解析 | 对远程调用结果做解析                  |
+| feign.codec.Encoder | 请求参数编码 |                             |
+| feign.Contract      | 注解格式     |                             |
+| feign.Retryer       | 失败重试机制 | 默认没有，但会使用Ribbon的重试机制，避免网络波动 |
+
+**方式一：配置文件**
+
+全局生效
+```propertiess
+feign.client.config.default.loggerLevel: full
+```
+局部生效
+```properties
+feign.client.config.user-service.loggerLevel: full
+```
+
+**方式二：配置类**
+
+首先声明一个Bean
+```java
+public class FeignConfig {
+    @Bean
+    public Logger.Level level() {
+        return Logger.Level.BASIC;
+    }
+}
+```
+
+① 若是全局,放在@EnableFeignClients后
+```java
+@EnableFeignClients(defaultConfiguration = FeignConfig.class)
+```
+
+② 若是局部，放在FeignClient注解中
+```java
+@FeignClient(name = "user-service", configuration = FeignConfig.class)
+```
+
+## 性能优化
+
+feign在发送请求时，底层客户端可通过三种方式发送请求
+- URLConnection: 默认方式，不支持连接池（连接池：减少创建连接的三次握手和断开连接的四次挥手）
+- Apache HttpClient: 支持连接池
+- OkHttp: 支持连接池
+
+优化Feign性能包括：
+- 使用连接池代替默认的URLConnection
+- 日志级别调整，减少日志输出
+
+### 连接池配置-HttpClient
+
+```xml
+<dependency>
+  <groupId>io.github.openfeign</groupId>
+  <artifactId>feign-httpclient</artifactId>
+</dependency>
+```
+配置连接池
+```yaml
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: BASIC # 日志级别
+  httpclient:
+    enabled: true # 开启feign对httpclient的支持
+    max-connections: 200 # 最大连接数，根据实际压测调整
+    max-connections-per-route: 50 # 每个路由最大连接数，根据实际压测调整
+```
+
+# GateWay网关
+
+## 介绍，作用
+
+为什么需要：
+- 进行身份和权限校验
+- 服务路由，负载均衡
+- 请求限流
+
+实现方式：（SpringCloud）
+- Zuul
+- GateWay
+
+Zuul：基于Servlet，使用阻塞IO，性能较差
+
+GateWay：基于Spring5中WebFlux，响应式实现，性能较好
+
+## 搭建
+
+网关自己也是一个服务，需要创建一个独立的模块，也需要注册到nacos中
+
+**1. 引入依赖**
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-gateway</artifactId>
+</dependency>
+```
+
+### 请求路由配置
+```properties
+server.port=8080
+spring.application.name=gateway
+spring.cloud.nacos.discovery.server-addr=localhost:8848
+spring.cloud.gateway.routes[0].id=user-service
+spring.cloud.gateway.routes[0].uri=lb://user-service
+spring.cloud.gateway.routes[0].predicates[0]=Path=/user/**
 
 
+#spring:
+#    cloud:
+#        gateway:
+#            routes:
+#                - id: user-service
+#                  uri: lb://user-service # lb:loadbalance
+#                  predicates: # 路由断言，判断请求是否满足路由规则条件
+#                    - Path=/user/** # 如果请求是以/user开口，则路由到user-service
+```
+
+<span style="color:red">使用Gateway后，还需要使用Feign吗？</span>
+- 当直接通过URL请求服务时，若Gateway中配置了路由，将直接拿到路由的信息
+- 如果是在业务代码中存在远程的调用，还是需要使用Feign
+
+## 断言工厂
+
+网关路由内容包括：
+- 路由id：唯一标识
+- uri：路由目的地，支持lb和http
+- predicates：路由断言，判断请求是否满足路由规则条件
+- filters：过滤器，对请求进行处理
+
+### 断言工厂
+
+配置文件中写的断言内容，这些断言字符串被断言工厂读取并处理，转变为路由判断的条件
+
+| 名称 | des           | example                                                                                   |
+| --- |---------------|-------------------------------------------------------------------------------------------|
+| After | 请求时间在某个时间之后   | After=2020-01-01T00:00:00+08:00[Asia/Shanghai]                                            |
+| Before | 请求时间在某个时间之前   | Before=2020-01-01T00:00:00+08:00[Asia/Shanghai]                                           |
+| Between | 请求时间在某个时间之间   | Between=2020-01-01T00:00:00+08:00[Asia/Shanghai],2020-01-02T00:00:00+08:00[Asia/Shanghai] |
+| Cookie | 请求需携带某个cookie | - Cookie=name                                                                             |
+| Header | 请求需包含某些header | - Header=X-Request-Id, \d+                                                                |
+| Host | 请求需时访问某个host  | - Host=**.somehost.org                                                                    |
+| Method | 请求的方法需为指定方式   | - Method=GET                                                                              |
+| Path | 请求的路径需包含指定规则  | - Path=/foo/{segment}, /foo/\d+                                                           |
+| Query | 请求的参数需包含指定参数  | - Query=foo, ba.+, ba.*                                                                   |
+| RemoteAddr | 请求的ip指定范围     | - RemoteAddr= ip/24                                                                       |               
+| Weight | 权重处理          | Weight=group1, 8                                                                          |
 
 
+## 过滤器GatewayFilter
 
+对进入网关的请求和微服务返回的响应做处理
+- 对经过网关的请求添加请求头
+- 对返回的响应结果拿出请求头(etc)做判断
 
+使用配置文件添加
+```yaml
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+          filters:
+            - AddRequestHeader=X-Request-Red, blue
+```
+上面只能为单个路由添加上过滤器，若需要为所有路由添加
+```yaml
+spring:
+  cloud:
+    gateway:
+      routes:
+        # ...
+      default-filters:
+        - AddRequestHeader=X-Request-Red, blue
+```
 
+## 全局过滤器
 
+前面使用的过滤器都是局部过滤器，在一些特殊情况下，使用并不方便，需要使用全局过滤器完成自定义逻辑
 
+实现GlobalFilter接口
+```java
+public interface GlobalFilter {
+    // exchange，请求上下文，获取request,response信息
+    // chain，过滤器链，用于调用下一个过滤器
+    Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain);
+}
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+例:
 

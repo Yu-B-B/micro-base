@@ -17,6 +17,7 @@
         <module>ordermoudle</module>
         <module>eurekamodle</module>
         <module>usermodule</module>
+        <module>gateway</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

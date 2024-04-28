@@ -9,6 +9,7 @@
         <module name="usermodule" />
         <module name="ordermoudle" />
         <module name="eurekamodle" />
+        <module name="gateway" />
       </profile>
     </annotationProcessing>
   </component>
@@ -16,6 +17,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cloud-demo" options="" />
       <module name="eurekamodle" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="ordermoudle" options="-parameters" />
       <module name="usermodule" options="-parameters" />
     </option>
