@@ -706,7 +706,7 @@ spring:
           filters:
             - AddRequestHeader=X-Request-Red, blue
 ```
-上面只能为单个路由添加上过滤器，若需要为所有路由添加
+上面只能为单个路由添加上过滤器，若需要为所有路由添加，使用`默认过滤器`
 ```yaml
 spring:
   cloud:
@@ -731,4 +731,403 @@ public interface GlobalFilter {
 ```
 
 例:
+```java
+public class AuthourizeFilter implements GlobalFilter{
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        // 获取请求信息
+        ServerHttpRequest request = exchange.getRequest();
+        MultiValueMap<String,String> params = request.getQueryParams();
+        // 获取参数中的authentication
+        String auth = params.getFirst("authentication");
+        if("admin".equals(auth)) {
+            // 放行
+            return chain.filter(exchange);
+        }
+        // 不放行
+        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+        return exchange.getResponse().setComplete();
+    }
+}
+```
 
+## 过滤器执行顺序
+
+请求进入网关会遇到的过滤器包括：当前路由过滤器，DefaultFilter，GlobalFilter
+
+在过程中，会将三个过滤器放在一个集合中，按照顺序依次执行
+
+无论是路由过滤器还是默认过滤器，其本质都是（AddRequestHeaderGatewayFilterFactory），它在读取配置文件后生成GatewayFilter，
+而对于全局过滤器，虽然类型和路由过滤器与默认过滤器不一致， 但是在网关中（FilteringWebHandler）中，存在一个过滤器适配器（GatewayFilterAdapter），
+其内存接收了全局过滤器（GlobalFilter），可将GlobalFilter适配为GatewayFilter
+
+所以，上述说能将三个过滤器放在一个集合中，集合类型为GatewayFilter
+
+执行顺序:
+- 过滤器指定的order值，order越小，优先级越高
+- 全局过滤器通过实现Ordered接口/添加@Order注解指定order值
+- 路由过滤器和defaultFilter的order有Spring指定，默认按照声明顺序从1递增
+- 当过滤器order值一样时，按照那个defaultFilter>路由过滤器>GlobalFilter的顺序执行
+
+## 跨域问题处理
+
+跨域问题包括
+- 域名跨域
+- 域名相同后端口不同
+
+网关处理跨域问题：
+```yaml
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true # 解决options请求被拦截问题
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:  # 允许哪些域名，全部为"*"
+              - "http://localhost:7491"
+              - "http://localhost:7492"
+            allowedMethods: # 允许的跨域ajax请求方式
+              - "GET"
+              - "POST"
+              - "PUT"
+              - "DELETE"
+            allowedHeaders: "*" # 允许的请求头
+            allowCredentials: true # 允许携带cookie
+            maxAge: 1800 # 有效时间
+```
+
+前端启动服务命令：
+live-server --port=7491
+
+
+# Docker
+
+# MQ
+
+## 同步与异步
+
+同步：实时调用，时效性高，微服务中Feign的调用为同步调用，需要等待接口返回结果
+- 耦合度高
+- 性能下降
+- 资源浪费：调用时需等待相应
+- 级联失败：调用链中一个失败整个失败
+
+
+异步：事件驱动模式，引入Broker（事件代理者），当前置完成需要用到后续服务时，直接通知Broker，Broker再通知后续服务，不在等待后续执行完成
+- 服务解耦
+- 性能提高，吞吐量提高
+- 服务无强依赖
+- 流量消峰
+- 过于依赖Broker，需要保证Broker的可靠，安全，吞吐能力
+- 架构负载，业务中无明显流程，不好追踪
+
+
+## 消息模型
+
+1. 直接通过队列发送消息
+- 基本消息队列（BasicQueue）
+- 工作消息队列（WorkQueue）
+
+2. 发布订阅（根据交换机可细分）
+- 广播（Fanout）
+- 路由（Direct）
+- 主题（Topic）
+
+3. 消息队列中角色
+- 生产者：将消息发送到队列queue
+- 消费者：接收接收并缓存消息
+- 订阅队列，处理队列中的消息
+
+### 基本消息队列
+
+生产者步骤：
+- 建立连接
+- 创建通道
+- 声明队列
+- 发送消息
+- 关闭通道和连接
+
+消费者步骤：
+- 建立连接
+- 创建通道
+- 声明队列
+- 接收消息
+
+在消费者接收消息中，提前声明如何处理消息，将行为挂在到队列中，当队列中存在消息，函数执行（回调函数），所以接收消息是异步过程
+
+### SPringAMQP
+
+AMQP：Advanced Message Queuing Protocol，高级消息队列协议，提供消息队列规范
+
+SpringAMQP：Spring对AMQP的封装，提供了一套操作AMQP的模板
+
+**依赖**
+```xml
+  <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-amqp</artifactId>
+  </dependency>
+```
+
+**配置**
+```yaml
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+```
+
+**生产者**
+```java
+@Autowired
+private RabbitTemplate rabbitTemplate;
+
+public void send() {
+    rabbitTemplate.convertAndSend("queue", "hello");
+}
+```
+
+**消费者**
+```java
+@RabbitListener(queues = "queue")
+public void receive(String message) {
+    System.out.println("接收到消息：" + message);
+}
+```
+
+### 工作队列
+
+一个队列多个消费者，消费者之间存在合作关系，解决当消息数量大约消费者处理能力，导致消息堆积，造成消息丢失
+
+**生产者**
+```java
+@Autowired
+private RabbitTemplate rabbitTemplate;
+
+public void send() {
+    for(int i = 0; i < 50; i++){
+        rabbitTemplate.convertAndSend("work-queue", "hello");
+        Thread.sleep(10);
+    }
+}
+```
+
+**消费者**
+```java
+@RabbitListener(queues = "work-queue")
+public void receive1(String message) {
+    System.out.println("消费者1接收到消息：" + message);
+}
+
+@RabbitListener(queues = "work-queue")
+public void receive2(String message) {
+    System.out.println("消费者2接收到消息：" + message);
+}
+```
+
+此时消费者1和消费者2将平均接收到消息，这是消息预取机制，取消消息预取机制
+- listener.simple.prefetch=1
+
+### 发布订阅
+
+与之前的方式相比，发布订阅可将同一条消息发送给多个消费者。实现方式是加入交换机（exchange）
+
+消息发给一个队列还是多个队列，都由交换机决定，常见的订阅模型：Fanout、Direct、Topic
+
+交换机只负责消息的转发，不存储消息，消息存储在队列中，路由失败则消息丢失
+
+#### Fanout
+
+将消息路由到每一个跟其绑定的队列
+
+步骤：
+- 在消费者服务中，声明队列和交换机，并进行绑定
+- 在消费者服务中，监听队列一和队列二
+
+**消费者**
+```java
+public class FanoutConsumer{
+  @Bean
+  public FanoutExchange fanoutExchange() {
+      return new FanoutExchange("fanout-exchange");
+  }
+  
+  @Bean
+  public Queue queue1() {
+      return new Queue("queue1");
+  }
+    
+  @Bean
+  public Binding binding1(Queue fanout1,FanoutExchange  change1) {
+      return BindingBuilder.bind(fanout1).to(change1);
+  }
+  // ...queue2,fanout2,binding2
+}
+```
+
+如何知道消费者真实拿到了数据，通过监听队列
+
+```java
+@RabbitListener(queues = "queue1")
+public void receive1(String message) {
+    System.out.println("消费者1接收到消息：" + message);
+}
+```
+
+**生产者**
+```java
+@Autowired
+private RabbitTemplate rabbitTemplate;
+
+public void send() {
+    // exchange, routingKey, message
+    rabbitTemplate.convertAndSend("fanout-exchange", "", "hello");
+}
+```
+
+#### Direct
+
+将接收到的消息按照规则路由到指定的Queue，可模拟Fanout
+
+步骤：
+- 每个queue都与exchange设置一个bindingKey
+- 发布者发布消息时，指定消息的RoutingKey
+- exchange将消息路由到BingKey与消息RoutingKey一致的队列
+
+=>
+
+- 通过RabbitListener声明Exchange，Queue，RoutingKey
+- 在消费者中，监听队列1和2
+- 生产者想交换机发送消息
+
+**消费者**
+```java
+@RabbitListener(bindings= @QueueBinding(
+    value = @Queue(name = "direct-queue1"),
+    exchange = @Exchange(value = "direct-exchange", type = ExchangeTypes.DIRECT),
+    key = "direct1" // 或 key = {"direct1","direct2"}
+))
+public void receive1(String message) {
+    System.out.println("消费者1接收到消息：" + message);
+}
+```
+
+#### Topic
+
+与Direct类似，但是RoutingKey是以多单词区分，以.分割，*代表一个单词，#代表多个单词，如：user.*、user.#、user.create
+
+**消费者**
+```java
+@RabbitListener(bindings= @QueueBinding(
+    value = @Queue(name = "topic-queue1"),
+    exchange = @Exchange(value = "topic-exchange", type = ExchangeTypes.TOPIC),
+    key = "user.*"))
+public void receive1(String message) {
+    System.out.println("消费者1接收到消息：" + message);
+}
+```
+
+**生产者**
+```java
+@Autowired
+private RabbitTemplate rabbitTemplate;
+
+public void send() {
+    rabbitTemplate.convertAndSend("topic-exchange", "user.create", "hello");
+}
+```
+
+### 消息转换器
+
+在RabbitTemplate发送消息时，消息类型都是Object，所以可以发任意消息给消息队列
+
+但是在消费者接收消息时，需要将消息转换为指定类型，所以需要消息转换器
+
+Spring中通过org.springframework.amqp.support.converter.MessageConverter处理，
+消息对垒中默认使用SimpleMessageConverter（基于JDK的ObjectOutputStream）完成序列化
+
+```xml
+<dependency>
+  <groupId>com.fasterxml.jackson.dataformat</groupId>
+  <artifactId>jackson-dataformat-xml</artifactId>
+  <version>2.9.10</version>
+</dependency>
+```
+
+在发送者中声明使用MessageConverter
+```java
+@Autowired
+private RabbitTemplate rabbitTemplate;
+
+public void send() {
+    rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+    rabbitTemplate.convertAndSend("queue", new User(1, "张三"));
+}
+```
+
+全局使用
+```java
+@Bean
+public MessageConverter messageConverter() {
+    return new Jackson2JsonMessageConverter();
+}
+```
+
+# ES
+
+负责数据存储，搜索，分析
+
+## ES基本概念
+
+- Document：文档，数据的最小单元，会被序列化为json格式
+- Index：索引，相同类型的文档集合
+- Mapping：映射，定义文档的字段类型
+
+| MySQL  | Elasticsearch | des                               |
+|--------|---------------|-----------------------------------|
+| Table  | Index         | 索引，文档集合，类似于数据库的表                  |
+| Row    | Docuemtn      | 文档，一条条数据，类似数据库中的行，文档格式都是Json      |
+| Colums | Field         | 字段，Json文档中的字段，类似数据库中的列            |
+| Schema | mapping       | Mappin是索引文档的索引，如：字段类型约束，类似数据库中的表  |
+| Sql    | DEL           | DSL，es提供的JSON风格请求语句,用来操作es,实现CRUD |
+
+MySQL擅长事务类型操作，可确保数据的安全和一致性
+
+ES：擅长海量数据的搜索、分析、计算
+
+## 正向索引与倒排索引
+
+传统数据库（MySql）采用正向索引，若插叙非索引字段的数据，将逐行扫描
+
+倒排索引，创建时形成新的表（词条（term），文档Id），文档：每条数据就是一个文档；词条：按照语义分成词语
+
+![image-20240530154736310](E:\File\JavaProject\XF\cloud-demo\images\image-20240530154736310.png)
+
+当开始查询时，先根据用户输入的句子进行分词，使用词条到倒排索引中查找，得到文档Id
+
+// TODO:
+
+# Sentinel
+
+## 雪崩问题
+
+微服务调用链路中某个服务出现故障，引起整个链路中所有微服务都不可用
+
+处理方式：
+- 超时处理：设置超时时间，请求超过时间未响应就返回错误信息
+- 舱壁处理：设定每个线程可使用的线程数，避免tomcat资源耗尽--线程隔离
+- 熔断降级：由断路器统计业务执行异常比例，如果超出阈值则熔断该业务，拦截访问该业务的所有请求
+
+- 流量控制：限制业务访问的QPS，避免服务因流量突增而故障--预防雪崩
+
+
+Sentinel是按照服务能承受的频率释放请求
+
+## 限流规则
+
+### 簇点链路
+
+项目内的调用链路，链路中被监控的每个接口就是一个资源，默认情况下sentinel监控SpringMvC中的每一个端点，因此SpringMVC的每一个端点就是调用链路中的一个资源
