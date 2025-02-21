@@ -1,0 +1,11 @@
+server:
+  port: 8989
+spring:
+  config:
+    import: optional:nacos:instead
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+  application:
+    name: nacos-order
