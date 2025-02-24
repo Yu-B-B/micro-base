@@ -2,6 +2,7 @@ package com.demo.server;
 
 import com.demo.OrderEntity;
 import com.demo.ProductEntity;
+import com.demo.feign.ProductFeign;
 import org.apache.http.client.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -24,6 +25,8 @@ public class OrderServer {
     private LoadBalancerClient balance;
     @Autowired
     private RestTemplate restTemplate;
+//    @Autowired
+//    private ProductFeign productFeign;
 
     public OrderEntity createOrder(String userId, String productId) {
         OrderEntity orderEntity = new OrderEntity();
@@ -31,6 +34,8 @@ public class OrderServer {
         orderEntity.setUserId(userId);
         // TODO:远程调用获取商品列表
         ProductEntity product = getProductFromRemote(productId);
+        System.out.println("调用 ----- ");
+
         orderEntity.setNum(3);
         orderEntity.setAmount(BigDecimal.valueOf(orderEntity.getNum()).multiply(product.getAmount()));
         orderEntity.setProductList(Arrays.asList(product));
@@ -51,9 +56,14 @@ public class OrderServer {
         String url = "http://" + instance.getHost() + ":" + instance.getPort() + "/product/" + productId;
 
         // 方式3：采用注解方式将请求设置为负载均衡 @LoadBalanced
-        url = "http://nacos-product/product"+productId;
+        url = "http://nacos-product/product/" + productId;
 
         // 使用RestTemplate 远程调用，RestTemplate 为线程安全的，抽取为工具类
         return restTemplate.getForObject(url, ProductEntity.class);
+
+//         方式4：使用OpenFeign远程获取商品信息
+//        System.out.println("调用 ----- ");
+//        return productFeign.getProduct(productId);
+
     }
 }
