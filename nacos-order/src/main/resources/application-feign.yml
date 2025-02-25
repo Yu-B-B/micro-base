@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            logger-level: full
+#            connect-timeout: 1000 # ms
+#            read-timeout: 2000 # ms
+#          nacos-product:
+#            logger-level: full
+#            connect-timeout: 3000 # ms
+#            read-timeout: 4000 # ms
+feign:
+  sentinel:
+    enabled: true

@@ -9,10 +9,12 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class OrderConfig {
-//    @Bean
-//    Retryer retryer(){
-//        return new Retryer.Default(); // Default 包括 重试间隔时间，最大超时时间，最大重试次数
-//    }
+    // openFeign重试器
+    @Bean
+    Retryer retryer(){
+        // this(100L, TimeUnit.SECONDS.toMillis(1L), 5); // 从100ms开始，每次重试为上次时间的1.5倍，最大时间为1s，最大重试5次
+        return new Retryer.Default(); // Default 包括 重试间隔时间，最大超时时间，最大重试次数
+    }
 
     // openFeign调用日志记录
     @Bean

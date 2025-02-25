@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+      eager: true # sentinel 默认为懒加载，需要访问请求后才会加载到sentinel中。这里可配置问提前加载

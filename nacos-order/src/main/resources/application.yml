@@ -1,25 +1,24 @@
 spring:
+  profiles:
+    active: dev
+    include: feign,sentinel
   cloud:
     nacos:
       server-addr: localhost:8848
-#      config:
-#        namespace: dev # 使用 dev 命名空间下的配置
-    openfeign:
-      client:
-        config:
-          default:
-            logger-level: full
-            connect-timeout: 1000
-            read-timeout: 3000
-#          nacos-order:
-#            logger-level: full
-#            connect-timeout: 3000
-#            read-timeout: 4000
-  # 作为配置中心使用配置
-  #    import: nacos:nacos_order.yaml # import能接收多个配置文件，
-  config:
-    import:
-       - nacos:nacos_order.yaml # 增加?group= 后缀，采用那个组中的内容
+      config:
+        namespace: ${spring.profiles.active:public} # 使用 dev 命名空间下的配置
+
      # 作为注册中心
   application:
     name: nacos-order
+logging:
+  level:
+    com.demo.feign: debug
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import:
+      - nacos:nacos-order.yaml?group=order

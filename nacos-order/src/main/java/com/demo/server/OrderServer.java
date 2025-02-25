@@ -1,5 +1,6 @@
 package com.demo.server;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.demo.OrderEntity;
 import com.demo.ProductEntity;
 import com.demo.feign.ProductFeign;
@@ -25,16 +26,21 @@ public class OrderServer {
     private LoadBalancerClient balance;
     @Autowired
     private RestTemplate restTemplate;
-//    @Autowired
-//    private ProductFeign productFeign;
+    @Autowired
+    private ProductFeign productFeign;
 
+    @SentinelResource(value = "createOrder")
     public OrderEntity createOrder(String userId, String productId) {
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setOrderId("");
         orderEntity.setUserId(userId);
-        // TODO:远程调用获取商品列表
-        ProductEntity product = getProductFromRemote(productId);
+        // 远程调用获取商品列表
+//        ProductEntity product = getProductFromRemote(productId);
+
         System.out.println("调用 ----- ");
+        // 使用openFeign替代RestTemplate
+        ProductEntity product = productFeign.getProduct(productId);
+
 
         orderEntity.setNum(3);
         orderEntity.setAmount(BigDecimal.valueOf(orderEntity.getNum()).multiply(product.getAmount()));

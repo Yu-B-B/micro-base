@@ -7,12 +7,14 @@ import com.alibaba.nacos.api.exception.NacosException;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 @SpringBootApplication
+@EnableFeignClients
 public class OrderNacosApplication {
     public static void main(String[] args) {
         try {

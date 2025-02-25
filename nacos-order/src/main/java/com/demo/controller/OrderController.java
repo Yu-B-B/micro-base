@@ -20,8 +20,8 @@ public class OrderController {
     @GetMapping("/{userId}/{productId}")
     public OrderEntity createOrder(@PathVariable("userId")String userId,@PathVariable("productId")String productId){
         OrderEntity order = orderServer.createOrder(userId, productId);
-        System.out.println(defaultProperties.getPort());
-        System.out.println(defaultProperties.getName());
+//        System.out.println(defaultProperties.getPort());
+//        System.out.println(defaultProperties.getName());
         return order;
     }
 }
