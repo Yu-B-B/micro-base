@@ -4,3 +4,4 @@ spring:
       transport:
         dashboard: localhost:8080
       eager: true # sentinel 默认为懒加载，需要访问请求后才会加载到sentinel中。这里可配置问提前加载
+      web-context-unify: false # 使用链路模式时需要关闭使用统一web上下文

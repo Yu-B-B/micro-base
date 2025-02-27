@@ -13,6 +13,7 @@ public class ProductFeignFallBack implements ProductFeign {
         ProductEntity productEntity = new ProductEntity();
         productEntity.setProductId("1kdsajf112");
         productEntity.setAmount(BigDecimal.valueOf(12));
+        System.out.println("..........兜底回调默认数据..........");
         return productEntity;
     }
 }

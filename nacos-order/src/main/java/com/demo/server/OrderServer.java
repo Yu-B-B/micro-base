@@ -37,7 +37,7 @@ public class OrderServer {
         // 远程调用获取商品列表
 //        ProductEntity product = getProductFromRemote(productId);
 
-        System.out.println("调用 ----- ");
+        System.out.println("请求商品数据 ----- ");
         // 使用openFeign替代RestTemplate
         ProductEntity product = productFeign.getProduct(productId);
 
