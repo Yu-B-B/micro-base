@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(value="nacos-product",fallback = ProductFeignFallBack.class) // 声明远程调用的那个服务
 public interface ProductFeign {
-    @GetMapping("/product/{id}")
+    @GetMapping("/api/product/{id}")
     ProductEntity getProduct(@PathVariable("id") String id);
 }
