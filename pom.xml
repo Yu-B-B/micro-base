@@ -22,6 +22,7 @@
         <module>nacos-user2</module>
         <module>common</module>
         <module>nacos-product</module>
+        <module>redis</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
