@@ -2,9 +2,14 @@
 
 传统模式中，想要提供远程调用，Spring中提供了RestTemplate, 用来发送http请求
 
+```pom
+spring-cloud-starter-loadbalancer
+```
+注入
 ```java
 
 @Bean
+@Loadbalance
 public RestTemplate restTemplate() {
     return new RestTemplate();
 }
@@ -249,6 +254,8 @@ ribbon:
 ```
 
 将服务注册到Nacos中
+
+springboot3中实现了自动将服务注册到nacos中，无需手动开启服务注册到nacos中
 ```xml
 <dependency>
   <groupId>org.springframework.cloud</groupId>

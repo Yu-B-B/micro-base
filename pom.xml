@@ -17,9 +17,9 @@
         <module>ordermoudle</module>
         <module>eurekamodle</module>
         <module>usermodule</module>
-        <module>gateway</module>
         <module>nacos-order</module>
         <module>nacos-user</module>
+        <module>nacos-user2</module>
         <module>common</module>
         <module>nacos-product</module>
     </modules>
