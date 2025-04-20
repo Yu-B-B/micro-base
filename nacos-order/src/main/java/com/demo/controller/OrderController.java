@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/api/order")
 public class OrderController {
     @Autowired
     private OrderServer orderServer;
@@ -21,21 +21,23 @@ public class OrderController {
     private DefaultProperties defaultProperties;
 
     private static final Logger log = LoggerFactory.getLogger(OrderController.class);
+
     @GetMapping("/create")
-    public OrderEntity createOrder(@RequestParam("userId")String userId, @RequestParam("productId")String productId){
+    public OrderEntity createOrder(@RequestParam("userId") String userId, @RequestParam("productId") String productId) {
         OrderEntity order = orderServer.createOrder(userId, productId);
         return order;
     }
 
     @GetMapping("/kill")
-    @SentinelResource(value = "kill",fallback = "killFallback") // 做热点参数限制
-    public OrderEntity kill(@RequestParam("userId")String userId, @RequestParam("productId")String productId){
+    @SentinelResource(value = "kill", fallback = "killFallback") // 做热点参数限制
+    public OrderEntity kill(@RequestParam(value = "userId") String userId, @RequestParam("productId") String productId) {
         OrderEntity order = orderServer.createOrder(userId, productId);
         order.setOrderId("12333333333333333333333333");
         return order;
     }
+
     // 热点参数限制使用到的方法
-    public OrderEntity killFallback(String userId, String productId, BlockException exception){
+    public OrderEntity killFallback(String userId, String productId, Throwable exception) {
         OrderEntity order = orderServer.createOrder(userId, productId);
         order.setOrderId("limit Sentinel params rule");
         log.info("......热点参数兜底回调......");
@@ -43,13 +45,13 @@ public class OrderController {
     }
 
     @GetMapping("/quickstart")
-    public String quickstart(){
+    public String quickstart() {
         System.out.println("quickstart");
         return "quickstart";
     }
 
     @GetMapping("/warmup")
-    public String warmup(){
+    public String warmup() {
         log.info("warmup");
         return "warmup";
     }

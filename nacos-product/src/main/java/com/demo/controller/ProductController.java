@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/api/product")
 public class ProductController {
     @GetMapping("/{id}")
     public ProductEntity getProductInfo(@PathVariable("id") String productId, HttpServletRequest handler) {
