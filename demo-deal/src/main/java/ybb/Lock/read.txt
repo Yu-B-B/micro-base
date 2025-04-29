@@ -1,0 +1,66 @@
+## 为什么需要分布式锁
+
+单机锁：synchronized、lock
+
+单机锁也称应用锁，当出现并发通过业务的方式调整数据库数量时，可使用单机锁控制访问安全
+
+若成为分布式后，同一个应用可部署到不同服务器中访问同一个服务器，不同的请求可分发到不同的服务器上；
+只有引用外部应用成为分布式锁。
+
+## 使用MYSQL实现分布式锁
+
+MySQL中存在for-update语句，for-update本质是对查询的数据上行锁；
+出现的问题：
+- 加锁后若应用宕机，无法解锁，其他数据无法进行加锁
+- 数据库本是稀缺资源
+
+## 分布式锁实现方案一：使用Redis实现分布式锁
+
+redis基于key-value存储在内存中
+
+实现：本质上通过set命令实现加锁，但是set命令之间不存在互斥性，采用setNX
+setnx key value
+
+若直接使用setnx 命令，完成业务操作后发生宕机或忘记释放锁，将产生死锁
+
+解决：在setnx后对刚才的key设置过期时间
+expire key {time}
+
+问题：业务执行时间大于设置的{time}
+解决：使用异步线程对key的时间做监听做时间续期
+
+问题：加锁过程中存在多个命令，加锁操作不为原子性
+解决：复合命令实现加锁 set {key} {value} ex {time} nx
+
+问题：解锁无法判断是否是持有这个线程的锁
+解决：在删除之前，只有持有锁的线程才能解锁成功，可在value中添加唯一标记
+
+## 分布式锁实现
+
+使用jar包：
+<groupId>redis.clients</groupId>
+<artifactId>jedis</artifactId>
+
+配置RedisConfig
+@Configuration
+public class RedisConfig {
+    @Bean
+    public JedisPool jedis {
+        JedisPoolConfig jc = new JedisPoolConfig();
+        JedisPool jp = new JedisPool(jc,host,port,time);
+        return jp;
+    }
+}
+
+
+# 简历
+
+重庆水运辅助监管
+队列 + 定时任务 处理子任务
+
+
+龙头港智慧平台：
+-采用分布式锁做堆场货物扣减
+-用高德地图对接司机坐标
+-锁定司机
+-沙箱支付-支付宝

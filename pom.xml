@@ -23,10 +23,11 @@
         <module>common</module>
         <module>nacos-product</module>
         <module>redis</module>
+        <module>demo-deal</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>17</java.version>
+        <java.version>8</java.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
         <mysql-version>8.0.31</mysql-version>
         <mybatis-plus-version>2.3.3</mybatis-plus-version>

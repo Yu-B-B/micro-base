@@ -1091,7 +1091,7 @@ public MessageConverter messageConverter() {
 
 - Document：文档，数据的最小单元，会被序列化为json格式
 - Index：索引，相同类型的文档集合
-- Mapping：映射，定义文档的字段类型
+  - Mapping：映射，定义文档的字段类型
 
 | MySQL  | Elasticsearch | des                               |
 |--------|---------------|-----------------------------------|
