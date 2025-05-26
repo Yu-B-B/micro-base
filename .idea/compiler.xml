@@ -10,24 +10,36 @@
         <module name="usermodule" />
         <module name="nacos-product" />
         <module name="ordermoudle" />
+        <module name="nacos-user2" />
         <module name="eurekamodle" />
         <module name="common" />
-        <module name="nacos-user" />
-        <module name="gateway" />
+        <module name="demo-deal" />
+        <module name="dedisn-refactor" />
         <module name="redis" />
         <module name="nacos-order" />
       </profile>
+      <profile name="Annotation profile for cloud-demo" enabled="true">
+        <sourceOutputDir name="../nacos-user2/target/generated-sources/annotations" />
+        <sourceTestOutputDir name="../nacos-user2/target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="nacos-user" />
+      </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="gateway" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="cloud-demo" options="" />
       <module name="common" options="-parameters" />
+      <module name="demo-deal" options="-parameters" />
       <module name="eurekamodle" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="nacos-order" options="-parameters" />
       <module name="nacos-product" options="-parameters" />
       <module name="nacos-user" options="-parameters" />
+      <module name="nacos-user2" options="-parameters" />
       <module name="ordermoudle" options="-parameters" />
       <module name="redis" options="-parameters" />
       <module name="usermodule" options="-parameters" />
