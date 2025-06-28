@@ -1,5 +1,6 @@
 package com.ybb.tank;
 
+import com.ybb.tank.entity.Bullet;
 import com.ybb.tank.entity.Tank;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,10 +10,18 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import static com.ybb.tank.content.ContentData.SCREEN_HEIGHT;
+import static com.ybb.tank.content.ContentData.SCREEN_WIDTH;
+import static com.ybb.tank.content.ContentData.MY_TANK_DEFAULT_X;
+import static com.ybb.tank.content.ContentData.MY_TANK_DEFAULT_Y;
+import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_X;
+import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_Y;
+
 @Slf4j
 public class TankFrame extends Frame {
 
-    Tank tank = new Tank(390, 580);
+    Tank tank = new Tank(MY_TANK_DEFAULT_X, MY_TANK_DEFAULT_Y);
+    Bullet bullet = new Bullet(MY_TANK_BULLET_X, MY_TANK_BULLET_Y, Direction.UP);
 
     private static boolean BL = false;
     private static boolean BU = false;
@@ -22,7 +31,7 @@ public class TankFrame extends Frame {
 
     public TankFrame() {
         setVisible(true);
-        setSize(800, 600);
+        setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         setTitle("tank war");
         setResizable(false);
 
@@ -41,8 +50,8 @@ public class TankFrame extends Frame {
 
     @Override
     public void paint(Graphics g) {
-        tank.paint(g);
-
+        tank.paint(g); // 主坦克
+        bullet.paint(g); // 主坦克子弹
     }
 
     private class MyKeyListener extends KeyAdapter {
@@ -103,5 +112,22 @@ public class TankFrame extends Frame {
 
             }
         }
+    }
+
+    // 双缓冲解决闪烁问题。先将需要绘制的内容放到缓冲中，在缓冲中绘制完成后一起绘制到画面
+    Image offectScreenImage = null;
+
+    @Override
+    public void update(Graphics g) {
+        if (offectScreenImage == null) {
+            offectScreenImage = this.createImage(SCREEN_WIDTH, SCREEN_HEIGHT);
+        }
+        Graphics graphics = offectScreenImage.getGraphics();
+        Color color = graphics.getColor();
+        graphics.setColor(Color.WHITE);
+        graphics.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        graphics.setColor(color);
+        paint(graphics);
+        g.drawImage(offectScreenImage, 0, 0, null);
     }
 }

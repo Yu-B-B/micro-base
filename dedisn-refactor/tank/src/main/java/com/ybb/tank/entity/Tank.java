@@ -4,12 +4,13 @@ import com.ybb.tank.Direction;
 import lombok.Data;
 
 import java.awt.*;
+import static com.ybb.tank.content.ContentData.MY_TANK_SPEED;
+import static com.ybb.tank.content.ContentData.MY_TANK_SIZE;
 
 @Data
 public class Tank {
     private int x,y;
     private Direction direction = Direction.UP;
-    private static final int SPEED = 20;
     private boolean moving = false;
 
     public Tank(int x,int y){
@@ -18,7 +19,10 @@ public class Tank {
     }
 
     public void paint(Graphics g) {
-        g.fillRect(x, y, SPEED,SPEED);
+        Color color = g.getColor();
+        g.setColor(Color.BLUE);
+        g.fillRect(x, y, MY_TANK_SIZE,MY_TANK_SIZE);
+        g.setColor(color);
         move();
     }
 
@@ -26,16 +30,16 @@ public class Tank {
         if(!moving) return;
         switch (direction) {
             case LEFT:
-                x -= SPEED;
+                x -= MY_TANK_SPEED;
                 break;
             case RIGHT:
-                x += SPEED;
+                x += MY_TANK_SPEED;
                 break;
             case UP:
-                y -= SPEED;
+                y -= MY_TANK_SPEED;
                 break;
             case DOWN:
-                y += SPEED;
+                y += MY_TANK_SPEED;
                 break;
             default:
                 break;
