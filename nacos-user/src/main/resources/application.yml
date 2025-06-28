@@ -1,7 +1,7 @@
 server:
-  port: 8089
-  servlet:
-    context-path: /nacos-user/
+port: 8089
+servlet:
+  context-path: /nacos-user/
 spring:
   application:
     name: nacos-user
@@ -9,15 +9,15 @@ spring:
     active: dev
 
   config:
-#    import: optional:nacos:instead # 没有指定配置文件加载时
+    #    import: optional:nacos:instead # 没有指定配置文件加载时
     import: optional:nacos:nacos-user-dev.yaml # 指定加载的配置
-#    import: "optional:nacos:" # 自寻找
-#    import: optional:nacos:${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension} # 动态匹配
+  #    import: "optional:nacos:" # 自寻找
+  #    import: optional:nacos:${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension} # 动态匹配
 
   cloud:
     nacos:
-#      discovery:
-#        server-addr: ${spring.cloud.nacos.config.server-addr}
+      #      discovery:
+      #        server-addr: ${spring.cloud.nacos.config.server-addr}
       config:
         server-addr: localhost:8848
         file-extension: yaml

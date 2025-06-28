@@ -19,7 +19,6 @@
         <module>usermodule</module>
         <module>nacos-order</module>
         <module>nacos-user</module>
-        <module>nacos-user2</module>
         <module>common</module>
         <module>nacos-product</module>
         <module>redis</module>

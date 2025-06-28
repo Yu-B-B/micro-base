@@ -1,4 +1,4 @@
-package com.ybb.dedisnrefactor.structure.conbine;
+package com.ybb.dedisnrefactor.structure.conbine.inter;
 
 public class Files implements FileSystemComponent {
     private String name;

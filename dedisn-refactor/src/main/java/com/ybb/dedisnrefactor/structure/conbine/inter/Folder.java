@@ -1,6 +1,5 @@
-package com.ybb.dedisnrefactor.structure.conbine;
+package com.ybb.dedisnrefactor.structure.conbine.inter;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.ybb.dedisnrefactor.structure.conbine;
+package com.ybb.dedisnrefactor.structure.conbine.inter;
 
 import org.junit.jupiter.api.Test;
 
