@@ -20,8 +20,8 @@ import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_Y;
 @Slf4j
 public class TankFrame extends Frame {
 
-    Tank tank = new Tank(MY_TANK_DEFAULT_X, MY_TANK_DEFAULT_Y);
-    Bullet bullet = new Bullet(MY_TANK_BULLET_X, MY_TANK_BULLET_Y, Direction.UP);
+    Tank tank = new Tank(MY_TANK_DEFAULT_X, MY_TANK_DEFAULT_Y, Direction.UP,this);
+    public Bullet bullet = new Bullet(MY_TANK_BULLET_X, MY_TANK_BULLET_Y, Direction.UP);
 
     private static boolean BL = false;
     private static boolean BU = false;
@@ -34,7 +34,6 @@ public class TankFrame extends Frame {
         setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         setTitle("tank war");
         setResizable(false);
-
 
         // 键盘按钮监听，让页面动态刷新
         addKeyListener(new MyKeyListener());
@@ -70,6 +69,9 @@ public class TankFrame extends Frame {
                     break;
                 case KeyEvent.VK_D:
                     BR = true;
+                    break;
+                case KeyEvent.VK_SPACE:
+                    tank.fire();
                     break;
                 default:
                     break;
@@ -124,7 +126,7 @@ public class TankFrame extends Frame {
         }
         Graphics graphics = offectScreenImage.getGraphics();
         Color color = graphics.getColor();
-        graphics.setColor(Color.WHITE);
+        graphics.setColor(Color.WHITE); // 只是对当前对象重新创建颜色，设置后将颜色回滚到之前的样式
         graphics.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         graphics.setColor(color);
         paint(graphics);

@@ -12,6 +12,9 @@ public class Bullet {
     private int x, y;
     private Direction direction;
 
+    // 特殊属性
+
+
 
     public Bullet(int x, int y, Direction dir) {
         this.x = x;
