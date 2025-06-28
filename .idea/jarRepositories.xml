@@ -2,9 +2,24 @@
 <project version="4">
   <component name="RemoteRepositoriesConfiguration">
     <remote-repository>
+      <option name="id" value="meituan-dianping-releases" />
+      <option name="name" value="Repository for releases artifacts" />
+      <option name="url" value="https://pixel.sankuai.com/repository/mtdp" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="spring-milestones" />
       <option name="name" value="Spring Milestones" />
       <option name="url" value="https://repo.spring.io/milestone" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="meituan-dianping-snapshots" />
+      <option name="name" value="Repository for snapshots artifacts" />
+      <option name="url" value="https://pixel.sankuai.com/repository/mtdp" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://pixel.sankuai.com/repository/mtdp" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />

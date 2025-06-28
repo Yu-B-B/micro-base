@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://D:/Support/apache-maven-3.9.9/org/springframework/boot/spring-boot-starter-parent/3.2.3/src/main/resources" charset="UTF-8" />
+    <file url="file:///D:/Support/apache-maven-3.9.9/org/springframework/boot/spring-boot-starter-parent/3.2.3/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dedisn-refactor/base/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dedisn-refactor/base/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/dedisn-refactor/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/dedisn-refactor/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/dedisn-refactor/tank/src/main/java" charset="UTF-8" />
@@ -19,5 +21,7 @@
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/usermodule/src/main/java" charset="UTF-8" />
+    <file url="file:///src/main/java" charset="UTF-8" />
+    <file url="file:///src/main/resources" charset="UTF-8" />
   </component>
 </project>

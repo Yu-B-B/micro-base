@@ -14,14 +14,15 @@
         <module name="common" />
         <module name="nacos-user" />
         <module name="demo-deal" />
+        <module name="tank" />
         <module name="redis" />
         <module name="nacos-order" />
+        <module name="base" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="gateway" target="17" />
       <module name="nacos-user2" target="1.8" />
-      <module name="tank" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

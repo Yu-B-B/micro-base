@@ -1,4 +1,4 @@
-package main.java.com.ybb.tank;
+package com.ybb.tank;
 
 public class Client {
     public static void main(String[] args) {

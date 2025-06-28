@@ -1,9 +1,14 @@
-package main.java.com.ybb.tank;
+package com.ybb.tank;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+@Slf4j
 public class TankFrame extends Frame {
 
     public TankFrame() {
@@ -11,6 +16,11 @@ public class TankFrame extends Frame {
         setSize(800, 600);
         setTitle("tank war");
         setResizable(false);
+
+        // 键盘按钮监听，让页面动态刷新
+        addKeyListener(new MyKeyListener());
+
+        // 关闭窗口监听
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -18,6 +28,7 @@ public class TankFrame extends Frame {
             }
         });
     }
+
 
     private int x = 100;
     private int y = 100;
@@ -28,5 +39,18 @@ public class TankFrame extends Frame {
         x += 10;
         y += 10;
 
+    }
+
+    private class MyKeyListener extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) { // 键盘按下
+            log.info("当前按下的按钮{}",e.getKeyCode());
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) { // 键盘抬起
+            log.info("当前抬起的按钮{}",e.getKeyCode());
+
+        }
     }
 }

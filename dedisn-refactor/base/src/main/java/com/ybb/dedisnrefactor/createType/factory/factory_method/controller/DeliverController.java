@@ -1,9 +1,7 @@
 package com.ybb.dedisnrefactor.createType.factory.factory_method.controller;
 
 import com.ybb.dedisnrefactor.createType.factory.factory_method.factory.FreeGoodsFactoryMap;
-import com.ybb.dedisnrefactor.createType.factory.factory_method.factory.impl.DiscountFreeGoodsFactory;
 import com.ybb.dedisnrefactor.createType.factory.factory_method.factory.FreeGoodsFactory;
-import com.ybb.dedisnrefactor.createType.factory.factory_method.factory.impl.SmallGiftFreeGoodsFactory;
 import com.ybb.dedisnrefactor.createType.factory.simple_factory.entity.AwardInfo;
 import com.ybb.dedisnrefactor.createType.factory.simple_factory.entity.ResponseResult;
 import com.ybb.dedisnrefactor.createType.factory.simple_factory.service.IFreeGoods;
