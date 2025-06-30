@@ -52,6 +52,7 @@ public class Tank {
     }
 
     public void fire() {
+        System.out.println("main tank x - y "+x+" "+y);
         tf.bullets.add(new Bullet(x, y, direction, this.tf));
     }
 }

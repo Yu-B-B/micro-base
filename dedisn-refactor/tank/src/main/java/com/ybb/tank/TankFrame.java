@@ -1,5 +1,6 @@
 package com.ybb.tank;
 
+import com.ybb.tank.content.ContentData;
 import com.ybb.tank.entity.Bullet;
 import com.ybb.tank.entity.Tank;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.ybb.tank.content.ContentData.SCREEN_HEIGHT;
 import static com.ybb.tank.content.ContentData.SCREEN_WIDTH;
@@ -32,6 +34,19 @@ public class TankFrame extends Frame {
     private static boolean BU = false;
     private static boolean BR = false;
     private static boolean BD = false;
+
+    public void init(){
+        for (int i = 0; i < 10; i++) {
+            int width = ContentData.SCREEN_WIDTH - ContentData.MY_TANK_SIZE;
+            int height = ContentData.SCREEN_HEIGHT - ContentData.MY_TANK_SIZE;
+            Random random = new Random();
+
+            int iw = random.nextInt(width);
+            int ih = random.nextInt(height);
+
+            elemTank.add(new Tank(iw, ih, Direction.UP,this));
+        }
+    }
 
 
     public TankFrame() {
@@ -60,6 +75,9 @@ public class TankFrame extends Frame {
         g.setColor(color);
 
         mainTank.paint(g); // 主坦
+        for (int i = 0; i < elemTank.size(); i++) {
+            elemTank.get(i).paint(g);
+        }
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).paint(g);
         }

@@ -26,12 +26,10 @@ public class Bullet {
         this.y = y;
         this.direction = dir;
         this.tf = tf;
-        this.live = true;
     }
 
     public void paint(Graphics grp) {
-        if(!live)
-        {
+        if (!live) {
             tf.bullets.remove(this);
         }
         Color color = grp.getColor();
@@ -63,25 +61,29 @@ public class Bullet {
     }
 
     // 子弹与地方坦克碰撞
-    private void checkBoom(){
-        for (int i = 0; i < tf.elemTank.size(); i++) {
-            Tank elTank = tf.elemTank.get(i);
-            int xRange = x+ MY_TANK_BULLET_SIZE;
-            int yRange = y+ MY_TANK_BULLET_SIZE;
+    private void checkBoom() {
+        System.out.println("main bullet x - y" + x + " " + y);
+        if (!tf.elemTank.isEmpty()) {
             boolean flag = false;
-            // 正向碰撞和反向碰撞
-            if(xRange>elTank.getX() || x<elTank.getX()+ContentData.MY_TANK_SIZE){
-                flag = true;
-                tf.bullets.remove(elTank);
-                return;
+            for (int i = 0; i < tf.elemTank.size(); i++) {
+                Tank elTank = tf.elemTank.get(i);
+                int bulletX = x + MY_TANK_BULLET_SIZE;
+                int bulletY = y + MY_TANK_BULLET_SIZE;
+                System.out.println("ele tank x - y" + bulletX + " " + bulletY);
+                // 正向碰撞和反向碰撞
+                if (direction.equals(Direction.UP)) { // bullet 向上，x不变，y减小
+                    int tankY = elTank.getY() + ContentData.MY_TANK_SIZE;
+                    if (bulletY < tankY) {
+                        System.err.println("发生碰撞");
+                        break;
+                    }
+                }
+
             }
-            if(yRange>elTank.getY() || y<elTank.getY()+ContentData.MY_TANK_SIZE){
-                flag = true;
-                tf.bullets.remove(elTank);
-                return;
+            if (!flag) {
+                // 移除当前坦克和子弹
+                tf.bullets.remove(this);
             }
         }
-        // 移除当前坦克和子弹
-        tf.bullets.remove(this);
     }
 }
