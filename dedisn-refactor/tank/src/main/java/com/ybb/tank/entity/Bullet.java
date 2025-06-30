@@ -59,5 +59,29 @@ public class Bullet {
                 break;
         }
         if (x < 0 || y < 0 || x > ContentData.SCREEN_WIDTH || y > ContentData.SCREEN_HEIGHT) live = false;
+        checkBoom();
+    }
+
+    // 子弹与地方坦克碰撞
+    private void checkBoom(){
+        for (int i = 0; i < tf.elemTank.size(); i++) {
+            Tank elTank = tf.elemTank.get(i);
+            int xRange = x+ MY_TANK_BULLET_SIZE;
+            int yRange = y+ MY_TANK_BULLET_SIZE;
+            boolean flag = false;
+            // 正向碰撞和反向碰撞
+            if(xRange>elTank.getX() || x<elTank.getX()+ContentData.MY_TANK_SIZE){
+                flag = true;
+                tf.bullets.remove(elTank);
+                return;
+            }
+            if(yRange>elTank.getY() || y<elTank.getY()+ContentData.MY_TANK_SIZE){
+                flag = true;
+                tf.bullets.remove(elTank);
+                return;
+            }
+        }
+        // 移除当前坦克和子弹
+        tf.bullets.remove(this);
     }
 }

@@ -19,13 +19,12 @@ import static com.ybb.tank.content.ContentData.SCREEN_HEIGHT;
 import static com.ybb.tank.content.ContentData.SCREEN_WIDTH;
 import static com.ybb.tank.content.ContentData.MY_TANK_DEFAULT_X;
 import static com.ybb.tank.content.ContentData.MY_TANK_DEFAULT_Y;
-import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_X;
-import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_Y;
 
 @Slf4j
 public class TankFrame extends Frame {
 
-    Tank tank = new Tank(MY_TANK_DEFAULT_X, MY_TANK_DEFAULT_Y, Direction.UP,this);
+    Tank mainTank = new Tank(MY_TANK_DEFAULT_X, MY_TANK_DEFAULT_Y, Direction.UP,this);
+    public List<Tank> elemTank = new ArrayList<>(10);
     public List<Bullet> bullets = new ArrayList<>();
 //    public Bullet bullet = new Bullet(MY_TANK_BULLET_X, MY_TANK_BULLET_Y, Direction.UP);
 
@@ -60,7 +59,7 @@ public class TankFrame extends Frame {
         g.drawString("子弹数量"+bullets.size(),10,60);
         g.setColor(color);
 
-        tank.paint(g); // 主坦
+        mainTank.paint(g); // 主坦
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).paint(g);
         }
@@ -85,7 +84,7 @@ public class TankFrame extends Frame {
                     BR = true;
                     break;
                 case KeyEvent.VK_SPACE:
-                    tank.fire();
+                    mainTank.fire();
                     break;
                 default:
                     break;
@@ -118,13 +117,13 @@ public class TankFrame extends Frame {
 
         private void setTankMainDir() {
             if (!BL && !BU && !BR && !BD) {
-                tank.setMoving(false);
+                mainTank.setMoving(false);
             } else {
-                tank.setMoving(true);
-                if (BU) tank.setDirection(Direction.UP);
-                if (BL) tank.setDirection(Direction.LEFT);
-                if (BR) tank.setDirection(Direction.RIGHT);
-                if (BD) tank.setDirection(Direction.DOWN);
+                mainTank.setMoving(true);
+                if (BU) mainTank.setDirection(Direction.UP);
+                if (BL) mainTank.setDirection(Direction.LEFT);
+                if (BR) mainTank.setDirection(Direction.RIGHT);
+                if (BD) mainTank.setDirection(Direction.DOWN);
 
             }
         }
