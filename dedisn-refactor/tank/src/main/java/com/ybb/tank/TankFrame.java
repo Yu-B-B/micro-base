@@ -4,11 +4,16 @@ import com.ybb.tank.entity.Bullet;
 import com.ybb.tank.entity.Tank;
 import lombok.extern.slf4j.Slf4j;
 
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.ybb.tank.content.ContentData.SCREEN_HEIGHT;
 import static com.ybb.tank.content.ContentData.SCREEN_WIDTH;
@@ -21,7 +26,8 @@ import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_Y;
 public class TankFrame extends Frame {
 
     Tank tank = new Tank(MY_TANK_DEFAULT_X, MY_TANK_DEFAULT_Y, Direction.UP,this);
-    public Bullet bullet = new Bullet(MY_TANK_BULLET_X, MY_TANK_BULLET_Y, Direction.UP);
+    public List<Bullet> bullets = new ArrayList<>();
+//    public Bullet bullet = new Bullet(MY_TANK_BULLET_X, MY_TANK_BULLET_Y, Direction.UP);
 
     private static boolean BL = false;
     private static boolean BU = false;
@@ -49,8 +55,16 @@ public class TankFrame extends Frame {
 
     @Override
     public void paint(Graphics g) {
-        tank.paint(g); // 主坦克
-        bullet.paint(g); // 主坦克子弹
+        Color color = g.getColor();
+        g.setColor(Color.BLACK);
+        g.drawString("子弹数量"+bullets.size(),10,60);
+        g.setColor(color);
+
+        tank.paint(g); // 主坦
+        for (int i = 0; i < bullets.size(); i++) {
+            bullets.get(i).paint(g);
+        }
+//        bullet.paint(g); // 主坦克子弹
     }
 
     private class MyKeyListener extends KeyAdapter {
