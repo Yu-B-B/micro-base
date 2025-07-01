@@ -9,6 +9,7 @@ import java.awt.*;
 
 import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_SIZE;
 import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_SPEED;
+import static com.ybb.tank.content.StaticResource.*;
 
 @Data
 public class Bullet {
@@ -28,14 +29,29 @@ public class Bullet {
         this.tf = tf;
     }
 
+    /**
+     * 绘制子弹,
+     * 子弹射出位置应该为坦克方向中心
+     * @param grp
+     */
     public void paint(Graphics grp) {
         if (!live) {
             tf.bullets.remove(this);
         }
-        Color color = grp.getColor();
-        grp.setColor(Color.BLACK);
-        grp.fillRect(x, y, MY_TANK_BULLET_SIZE, MY_TANK_BULLET_SIZE);
-        grp.setColor(color);
+        switch (direction) {
+            case LEFT:
+                grp.drawImage(bulletL, x, y, null);
+                break;
+            case RIGHT:
+                grp.drawImage(bulletR, x, y, null);
+                break;
+            case UP:
+                grp.drawImage(bulletU, x, y, null);
+                break;
+            case DOWN:
+                grp.drawImage(bulletD, x, y, null);
+                break;
+        }
         move();
     }
 
@@ -57,7 +73,7 @@ public class Bullet {
                 break;
         }
         if (x < 0 || y < 0 || x > ContentData.SCREEN_WIDTH || y > ContentData.SCREEN_HEIGHT) live = false;
-        checkBoom();
+//        checkBoom();
     }
 
     // 子弹与地方坦克碰撞
