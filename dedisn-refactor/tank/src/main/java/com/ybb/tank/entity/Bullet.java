@@ -3,6 +3,7 @@ package com.ybb.tank.entity;
 import com.ybb.tank.Direction;
 import com.ybb.tank.TankFrame;
 import com.ybb.tank.content.ContentData;
+import com.ybb.tank.content.StaticResource;
 import lombok.Data;
 
 import java.awt.*;

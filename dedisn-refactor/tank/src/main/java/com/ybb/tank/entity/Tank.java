@@ -2,11 +2,13 @@ package com.ybb.tank.entity;
 
 import com.ybb.tank.Direction;
 import com.ybb.tank.TankFrame;
+import com.ybb.tank.content.ContentData;
+import com.ybb.tank.content.StaticResource;
 import lombok.Data;
 
 import java.awt.*;
 
-import static com.ybb.tank.content.ContentData.MY_TANK_SPEED;
+import static com.ybb.tank.content.ContentData.*;
 import static com.ybb.tank.content.StaticResource.*;
 
 @Data
@@ -15,6 +17,7 @@ public class Tank {
     private Direction direction = Direction.UP;
     private boolean moving = false;
     private TankFrame tf = null;
+
 
     public Tank(int x, int y, Direction direction, TankFrame tankFrame) {
         this.x = x;
@@ -25,6 +28,7 @@ public class Tank {
 
     /**
      * 根据方向设置坦克使用图片
+     *
      * @param g
      */
     public void paint(Graphics g) {
@@ -66,7 +70,9 @@ public class Tank {
     }
 
     public void fire() {
-        System.out.println("main tank x - y "+x+" "+y);
-        tf.bullets.add(new Bullet(x, y, direction, this.tf));
+        int bx = x + TANK_WIDTH  - TANK_BULLET_WIDTH / 2;
+        int by = y + TANK_HEIGHT   - TANK_BULLET_HEIGHT / 2;
+        System.out.println("main tank x - y " + bx + " " + by);
+        tf.bullets.add(new Bullet(bx, by, direction, this.tf));
     }
 }
