@@ -7,7 +7,7 @@ import lombok.Data;
 import java.awt.*;
 
 import static com.ybb.tank.content.ContentData.MY_TANK_SPEED;
-import static com.ybb.tank.content.ContentData.MY_TANK_SIZE;
+import static com.ybb.tank.content.StaticResource.*;
 
 @Data
 public class Tank {
@@ -23,11 +23,25 @@ public class Tank {
         this.tf = tankFrame;
     }
 
+    /**
+     * 根据方向设置坦克使用图片
+     * @param g
+     */
     public void paint(Graphics g) {
-        Color color = g.getColor();
-        g.setColor(Color.BLUE);
-        g.fillRect(x, y, MY_TANK_SIZE, MY_TANK_SIZE);
-        g.setColor(color);
+        switch (direction) {
+            case LEFT:
+                g.drawImage(tankL, x, y, null);
+                break;
+            case RIGHT:
+                g.drawImage(tankR, x, y, null);
+                break;
+            case UP:
+                g.drawImage(tankU, x, y, null);
+                break;
+            case DOWN:
+                g.drawImage(tankD, x, y, null);
+                break;
+        }
         move();
     }
 

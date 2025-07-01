@@ -157,7 +157,7 @@ public class TankFrame extends Frame {
         }
         Graphics graphics = offectScreenImage.getGraphics();
         Color color = graphics.getColor();
-        graphics.setColor(Color.WHITE); // 只是对当前对象重新创建颜色，设置后将颜色回滚到之前的样式
+        graphics.setColor(Color.BLACK); // 只是对当前对象重新创建颜色，设置后将颜色回滚到之前的样式
         graphics.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         graphics.setColor(color);
         paint(graphics);
