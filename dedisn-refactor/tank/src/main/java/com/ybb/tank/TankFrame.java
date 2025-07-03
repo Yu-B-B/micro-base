@@ -44,7 +44,7 @@ public class TankFrame extends Frame {
             int iw = random.nextInt(width);
             int ih = random.nextInt(height);
 
-            elemTank.add(new Tank(iw, ih, Direction.UP,this));
+            elemTank.add(new Tank(20 + i * 90 , 200, Direction.UP,this));
         }
     }
 
@@ -80,6 +80,13 @@ public class TankFrame extends Frame {
         }
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).paint(g);
+        }
+
+        // TODO：一直检查两个块是否存在重合
+        for (int i = 0; i < bullets.size(); i++) {
+            for (int j = 0; j < elemTank.size(); j++) {
+                bullets.get(i).intersect(elemTank.get(j));
+            }
         }
 //        bullet.paint(g); // 主坦克子弹
     }

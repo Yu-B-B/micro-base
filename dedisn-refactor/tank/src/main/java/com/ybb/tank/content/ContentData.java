@@ -15,5 +15,5 @@ public class ContentData {
     public static final int TANK_BULLET_WIDTH = StaticResource.bulletD.getWidth();
     public static final int TANK_BULLET_HEIGHT = StaticResource.bulletD.getHeight();
     public static final int MY_TANK_BULLET_SPEED = 15;
-    public static final int MY_TANK_BULLET_SIZE = 5;
+    public static final int TANK_BULLET_SIZE = 5;
 }

@@ -17,6 +17,7 @@ public class Tank {
     private Direction direction = Direction.UP;
     private boolean moving = false;
     private TankFrame tf = null;
+    private boolean live = true;
 
 
     public Tank(int x, int y, Direction direction, TankFrame tankFrame) {
@@ -32,6 +33,9 @@ public class Tank {
      * @param g
      */
     public void paint(Graphics g) {
+        if(!live) {
+            tf.elemTank.remove(this);
+        };
         switch (direction) {
             case LEFT:
                 g.drawImage(tankL, x, y, null);
@@ -70,9 +74,13 @@ public class Tank {
     }
 
     public void fire() {
-        int bx = x + TANK_WIDTH  - TANK_BULLET_WIDTH / 2;
-        int by = y + TANK_HEIGHT   - TANK_BULLET_HEIGHT / 2;
+        int bx = x + TANK_WIDTH /2 - TANK_BULLET_WIDTH / 2;
+        int by = y + TANK_HEIGHT /2  - TANK_BULLET_HEIGHT / 2;
         System.out.println("main tank x - y " + bx + " " + by);
         tf.bullets.add(new Bullet(bx, by, direction, this.tf));
+    }
+
+    public void destory() {
+        this.live = false;
     }
 }

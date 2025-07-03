@@ -3,12 +3,11 @@ package com.ybb.tank.entity;
 import com.ybb.tank.Direction;
 import com.ybb.tank.TankFrame;
 import com.ybb.tank.content.ContentData;
-import com.ybb.tank.content.StaticResource;
 import lombok.Data;
 
 import java.awt.*;
 
-import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_SIZE;
+import static com.ybb.tank.content.ContentData.TANK_BULLET_SIZE;
 import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_SPEED;
 import static com.ybb.tank.content.StaticResource.*;
 
@@ -74,33 +73,24 @@ public class Bullet {
                 break;
         }
         if (x < 0 || y < 0 || x > ContentData.SCREEN_WIDTH || y > ContentData.SCREEN_HEIGHT) live = false;
-//        checkBoom();
     }
 
-    // 子弹与地方坦克碰撞
-    private void checkBoom() {
-        System.out.println("main bullet x - y" + x + " " + y);
-        if (!tf.elemTank.isEmpty()) {
-            boolean flag = false;
-            for (int i = 0; i < tf.elemTank.size(); i++) {
-                Tank elTank = tf.elemTank.get(i);
-                int bulletX = x + MY_TANK_BULLET_SIZE;
-                int bulletY = y + MY_TANK_BULLET_SIZE;
-                System.out.println("ele tank x - y" + bulletX + " " + bulletY);
-                // 正向碰撞和反向碰撞
-                if (direction.equals(Direction.UP)) { // bullet 向上，x不变，y减小
-                    int tankY = elTank.getY() + ContentData.MY_TANK_SIZE;
-                    if (bulletY < tankY) {
-                        System.err.println("发生碰撞");
-                        break;
-                    }
-                }
+    public void destory(){
+        this.live = false;
+    }
 
-            }
-            if (!flag) {
-                // 移除当前坦克和子弹
-                tf.bullets.remove(this);
-            }
+    /**
+     * 发生碰撞时
+     * @param tank
+     * @return
+     */
+    public boolean intersect(Tank tank) {
+        Rectangle bulletArea = new Rectangle(this.x, this.y, bulletD.getWidth(), bulletD.getHeight());
+        Rectangle tankArea = new Rectangle(tank.getX(), tank.getY(), tankD.getWidth(), tankD.getHeight());
+        if(bulletArea.intersects(tankArea)) {
+            this.destory();
+            tank.destory();
         }
+        return false;
     }
 }
