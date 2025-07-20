@@ -23,7 +23,6 @@ public class Tank {
     //
     private Random random = new Random();
 
-
     public Tank(int x, int y, Direction direction, TankFrame tankFrame, Group group) {
         this.x = x;
         this.y = y;
@@ -41,21 +40,39 @@ public class Tank {
         if (!live) {
             tf.enemyTanks.remove(this);
         }
-
-        switch (direction) {
-            case LEFT:
-                g.drawImage(tankL, x, y, null);
-                break;
-            case RIGHT:
-                g.drawImage(tankR, x, y, null);
-                break;
-            case UP:
-                g.drawImage(tankU, x, y, null);
-                break;
-            case DOWN:
-                g.drawImage(tankD, x, y, null);
-                break;
+        if(group.equals(Group.BAD)){
+            switch (direction) {
+                case LEFT:
+                    g.drawImage(tankL, x, y, null);
+                    break;
+                case RIGHT:
+                    g.drawImage(tankR, x, y, null);
+                    break;
+                case UP:
+                    g.drawImage(tankU, x, y, null);
+                    break;
+                case DOWN:
+                    g.drawImage(tankD, x, y, null);
+                    break;
+            }
         }
+        if(group.equals(Group.GOOD)){
+            switch (direction) {
+                case LEFT:
+                    g.drawImage(myTankL, x, y, null);
+                    break;
+                case RIGHT:
+                    g.drawImage(myTankR, x, y, null);
+                    break;
+                case UP:
+                    g.drawImage(myTankU, x, y, null);
+                    break;
+                case DOWN:
+                    g.drawImage(myTankD, x, y, null);
+                    break;
+            }
+        }
+
         move();
     }
 
