@@ -96,9 +96,15 @@ public class Tank {
         }
         if(group.equals(Group.BAD)){
             // 敌方坦克打出子弹
-            if (random.nextInt(10) > 8) this.fire();
+            if (random.nextInt(10) > 8) {
+                this.fire();
+            }
+            if(random.nextInt(100)<2){
+                this.direction = Direction.values()[random.nextInt(Direction.values().length)];
+            }
             checkBorder();
         }
+
     }
 
     /**

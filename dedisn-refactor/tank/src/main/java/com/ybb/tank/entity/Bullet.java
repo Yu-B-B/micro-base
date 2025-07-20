@@ -8,7 +8,7 @@ import lombok.Data;
 
 import java.awt.*;
 
-import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_SPEED;
+import static com.ybb.tank.content.ContentData.*;
 import static com.ybb.tank.content.StaticResource.*;
 
 @Data
@@ -97,7 +97,9 @@ public class Bullet {
             this.destory(); // 子弹移除
             tank.destory(); // 坦克移除
             // 爆炸
-            tf.exposes.add(new Expose(this.x, this.y, tf));
+            int ex = tank.getX() + TANK_WIDTH / 2 - Expose.WIDTH / 2;
+            int ey = tank.getY() + TANK_HEIGHT / 2 - Expose.HEIGHT / 2;
+            tf.exposes.add(new Expose(ex, ey, tf));
         }
     }
 }

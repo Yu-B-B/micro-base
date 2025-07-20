@@ -7,8 +7,8 @@ import sun.security.util.ResourcesMgr;
 import java.awt.*;
 
 public class Expose {
-    private static int WIDTH = StaticResource.expose[0].getWidth();
-    private static int HEIGHT = StaticResource.expose[0].getHeight();
+    public static int WIDTH = StaticResource.expose[0].getWidth();
+    public static int HEIGHT = StaticResource.expose[0].getHeight();
     private int x, y;
     private boolean live = true;
     private int step = 0;
