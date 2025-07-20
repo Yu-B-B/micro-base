@@ -1,13 +1,13 @@
 package com.ybb.tank.entity;
 
-import com.ybb.tank.Direction;
+import com.ybb.tank.content.Direction;
 import com.ybb.tank.TankFrame;
 import com.ybb.tank.content.ContentData;
+import com.ybb.tank.content.Group;
 import lombok.Data;
 
 import java.awt.*;
 
-import static com.ybb.tank.content.ContentData.TANK_BULLET_SIZE;
 import static com.ybb.tank.content.ContentData.MY_TANK_BULLET_SPEED;
 import static com.ybb.tank.content.StaticResource.*;
 
@@ -19,14 +19,15 @@ public class Bullet {
     private boolean live = true;
 
     private TankFrame tf = null;
-    // 特殊属性
+    private Group group = Group.BAD;
 
 
-    public Bullet(int x, int y, Direction dir, TankFrame tf) {
+    public Bullet(int x, int y, Direction dir, TankFrame tf, Group group) {
         this.x = x;
         this.y = y;
         this.direction = dir;
         this.tf = tf;
+        this.group = group;
     }
 
     /**
@@ -84,13 +85,13 @@ public class Bullet {
      * @param tank
      * @return
      */
-    public boolean intersect(Tank tank) {
+    public void intersect(Tank tank) {
+        if(this.group == tank.getGroup()) return;
         Rectangle bulletArea = new Rectangle(this.x, this.y, bulletD.getWidth(), bulletD.getHeight());
         Rectangle tankArea = new Rectangle(tank.getX(), tank.getY(), tankD.getWidth(), tankD.getHeight());
         if(bulletArea.intersects(tankArea)) {
             this.destory();
             tank.destory();
         }
-        return false;
     }
 }

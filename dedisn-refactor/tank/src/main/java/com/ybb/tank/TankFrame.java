@@ -1,6 +1,8 @@
 package com.ybb.tank;
 
 import com.ybb.tank.content.ContentData;
+import com.ybb.tank.content.Direction;
+import com.ybb.tank.content.Group;
 import com.ybb.tank.entity.Bullet;
 import com.ybb.tank.entity.Tank;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ import static com.ybb.tank.content.ContentData.MY_TANK_DEFAULT_Y;
 @Slf4j
 public class TankFrame extends Frame {
 
-    Tank mainTank = new Tank(MY_TANK_DEFAULT_X, MY_TANK_DEFAULT_Y, Direction.UP,this);
+    Tank mainTank = new Tank(MY_TANK_DEFAULT_X, MY_TANK_DEFAULT_Y, Direction.UP,this, Group.GOOD);
     public List<Tank> elemTank = new ArrayList<>(10);
     public List<Bullet> bullets = new ArrayList<>();
 //    public Bullet bullet = new Bullet(MY_TANK_BULLET_X, MY_TANK_BULLET_Y, Direction.UP);
@@ -44,7 +46,7 @@ public class TankFrame extends Frame {
             int iw = random.nextInt(width);
             int ih = random.nextInt(height);
 
-            elemTank.add(new Tank(20 + i * 90 , 200, Direction.UP,this));
+            elemTank.add(new Tank(20 + i * 90 , 200, Direction.DOWN,this, Group.BAD));
         }
     }
 

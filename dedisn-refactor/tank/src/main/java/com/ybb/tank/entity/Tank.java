@@ -1,12 +1,12 @@
 package com.ybb.tank.entity;
 
-import com.ybb.tank.Direction;
+import com.ybb.tank.content.Direction;
 import com.ybb.tank.TankFrame;
-import com.ybb.tank.content.ContentData;
-import com.ybb.tank.content.StaticResource;
+import com.ybb.tank.content.Group;
 import lombok.Data;
 
 import java.awt.*;
+import java.util.Random;
 
 import static com.ybb.tank.content.ContentData.*;
 import static com.ybb.tank.content.StaticResource.*;
@@ -14,17 +14,20 @@ import static com.ybb.tank.content.StaticResource.*;
 @Data
 public class Tank {
     private int x, y;
-    private Direction direction = Direction.UP;
-    private boolean moving = false;
-    private TankFrame tf = null;
-    private boolean live = true;
+    private Direction direction = Direction.UP; // 朝向
+    private boolean moving = true; // 是否自动移动
+    private TankFrame tf = null; // 上层属性
+    private boolean live = true; // 是否存活
+    private Group group = Group.BAD; // 区分敌我
+    private Random random = new Random();
 
 
-    public Tank(int x, int y, Direction direction, TankFrame tankFrame) {
+    public Tank(int x, int y, Direction direction, TankFrame tankFrame, Group group) {
         this.x = x;
         this.y = y;
         this.direction = direction;
         this.tf = tankFrame;
+        this.group = group;
     }
 
     /**
@@ -33,9 +36,10 @@ public class Tank {
      * @param g
      */
     public void paint(Graphics g) {
-        if(!live) {
+        if (!live) {
             tf.elemTank.remove(this);
-        };
+        }
+        ;
         switch (direction) {
             case LEFT:
                 g.drawImage(tankL, x, y, null);
@@ -71,13 +75,13 @@ public class Tank {
             default:
                 break;
         }
+        if (random.nextInt(10) > 8) this.fire();
     }
 
     public void fire() {
-        int bx = x + TANK_WIDTH /2 - TANK_BULLET_WIDTH / 2;
-        int by = y + TANK_HEIGHT /2  - TANK_BULLET_HEIGHT / 2;
-        System.out.println("main tank x - y " + bx + " " + by);
-        tf.bullets.add(new Bullet(bx, by, direction, this.tf));
+        int bx = x + TANK_WIDTH / 2 - TANK_BULLET_WIDTH / 2;
+        int by = y + TANK_HEIGHT / 2 - TANK_BULLET_HEIGHT / 2;
+        tf.bullets.add(new Bullet(bx, by, direction, this.tf, this.group));
     }
 
     public void destory() {
