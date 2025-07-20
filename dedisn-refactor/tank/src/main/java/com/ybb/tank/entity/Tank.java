@@ -20,8 +20,11 @@ public class Tank {
     private TankFrame tf = null; // 上层属性
     private boolean live = true; // 是否存活
     private Group group = Group.BAD; // 区分敌我
-    //
     private Random random = new Random();
+    private static int WIDTH = TANK_WIDTH;
+    private static int HEIGHT = TANK_HEIGHT;
+
+    public Rectangle tankRect = new Rectangle();
 
     public Tank(int x, int y, Direction direction, TankFrame tankFrame, Group group) {
         this.x = x;
@@ -29,6 +32,11 @@ public class Tank {
         this.direction = direction;
         this.tf = tankFrame;
         this.group = group;
+
+        tankRect.x = x;
+        tankRect.y = y;
+        tankRect.width = WIDTH;
+        tankRect.height = HEIGHT;
     }
 
     /**
@@ -40,37 +48,19 @@ public class Tank {
         if (!live) {
             tf.enemyTanks.remove(this);
         }
-        if(group.equals(Group.BAD)){
-            switch (direction) {
-                case LEFT:
-                    g.drawImage(tankL, x, y, null);
-                    break;
-                case RIGHT:
-                    g.drawImage(tankR, x, y, null);
-                    break;
-                case UP:
-                    g.drawImage(tankU, x, y, null);
-                    break;
-                case DOWN:
-                    g.drawImage(tankD, x, y, null);
-                    break;
-            }
-        }
-        if(group.equals(Group.GOOD)){
-            switch (direction) {
-                case LEFT:
-                    g.drawImage(myTankL, x, y, null);
-                    break;
-                case RIGHT:
-                    g.drawImage(myTankR, x, y, null);
-                    break;
-                case UP:
-                    g.drawImage(myTankU, x, y, null);
-                    break;
-                case DOWN:
-                    g.drawImage(myTankD, x, y, null);
-                    break;
-            }
+        switch (direction) {
+            case LEFT:
+                g.drawImage(group.equals(Group.BAD) ? tankL : myTankL, x, y, null);
+                break;
+            case RIGHT:
+                g.drawImage(group.equals(Group.BAD) ? tankR : myTankR, x, y, null);
+                break;
+            case UP:
+                g.drawImage(group.equals(Group.BAD) ? tankU : myTankU, x, y, null);
+                break;
+            case DOWN:
+                g.drawImage(group.equals(Group.BAD) ? tankD : myTankD, x, y, null);
+                break;
         }
 
         move();
@@ -94,12 +84,14 @@ public class Tank {
             default:
                 break;
         }
-        if(group.equals(Group.BAD)){
+        tankRect.x = x;
+        tankRect.y = y;
+        if (group.equals(Group.BAD)) {
             // 敌方坦克打出子弹
             if (random.nextInt(10) > 8) {
                 this.fire();
             }
-            if(random.nextInt(100)<2){
+            if (random.nextInt(100) < 2) {
                 this.direction = Direction.values()[random.nextInt(Direction.values().length)];
             }
             checkBorder();
@@ -111,12 +103,13 @@ public class Tank {
      * 边界检查
      * 触碰到边界后随机方向移动
      */
-    private void checkBorder(){
+    private void checkBorder() {
         boolean touch = false;
         if(x < 0) { x = 0; touch = true; }
-        if(y < 0) { y = 0; touch = true; }
-        if(x > SCREEN_WIDTH - TANK_WIDTH) { x = SCREEN_WIDTH - TANK_WIDTH; touch = true; }
-        if(y > SCREEN_HEIGHT - TANK_HEIGHT) { y = SCREEN_HEIGHT - TANK_HEIGHT; touch = true; }
+        // y轴要减去上面的状态栏
+        if(y < 30) { y = 30; touch = true; }
+        if(x > SCREEN_WIDTH - WIDTH) { x = SCREEN_WIDTH - WIDTH; touch = true; }
+        if(y > SCREEN_HEIGHT - HEIGHT) { y = SCREEN_HEIGHT - HEIGHT; touch = true; }
         if(touch) {
             Direction[] directions = Direction.values();
             Direction oldDir = this.direction;
@@ -124,14 +117,14 @@ public class Tank {
             Direction newDir;
             do {
                 newDir = directions[random.nextInt(directions.length)];
-            } while(newDir == oldDir);
+            } while (newDir == oldDir);
             this.direction = newDir;
         }
     }
 
     public void fire() {
-        int bx = x + TANK_WIDTH / 2 - TANK_BULLET_WIDTH / 2;
-        int by = y + TANK_HEIGHT / 2 - TANK_BULLET_HEIGHT / 2;
+        int bx = x + WIDTH / 2 - TANK_BULLET_WIDTH / 2;
+        int by = y + HEIGHT / 2 - TANK_BULLET_HEIGHT / 2;
         tf.bullets.add(new Bullet(bx, by, direction, this.tf, this.group));
     }
 
