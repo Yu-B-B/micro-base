@@ -39,7 +39,7 @@ public class Tank {
      */
     public void paint(Graphics g) {
         if (!live) {
-            tf.elemTank.remove(this);
+            tf.enemyTanks.remove(this);
         }
 
         switch (direction) {
@@ -77,8 +77,33 @@ public class Tank {
             default:
                 break;
         }
-        // 敌方坦克打出子弹
-        if (random.nextInt(10) > 8) this.fire();
+        if(group.equals(Group.BAD)){
+            // 敌方坦克打出子弹
+            if (random.nextInt(10) > 8) this.fire();
+            checkBorder();
+        }
+    }
+
+    /**
+     * 边界检查
+     * 触碰到边界后随机方向移动
+     */
+    private void checkBorder(){
+        boolean touch = false;
+        if(x < 0) { x = 0; touch = true; }
+        if(y < 0) { y = 0; touch = true; }
+        if(x > SCREEN_WIDTH - TANK_WIDTH) { x = SCREEN_WIDTH - TANK_WIDTH; touch = true; }
+        if(y > SCREEN_HEIGHT - TANK_HEIGHT) { y = SCREEN_HEIGHT - TANK_HEIGHT; touch = true; }
+        if(touch) {
+            Direction[] directions = Direction.values();
+            Direction oldDir = this.direction;
+            // 随机新方向，不能和原方向一样
+            Direction newDir;
+            do {
+                newDir = directions[random.nextInt(directions.length)];
+            } while(newDir == oldDir);
+            this.direction = newDir;
+        }
     }
 
     public void fire() {

@@ -10,6 +10,7 @@ import java.io.IOException;
 public class StaticResource {
     public static BufferedImage tankL, tankU, tankR, tankD;
     public static BufferedImage bulletL, bulletU, bulletR, bulletD;
+    public static BufferedImage[] expose = new BufferedImage[16];
 
     // 加载静态资源，方便后续使用
     static {
@@ -23,6 +24,10 @@ public class StaticResource {
             bulletU = ImageIO.read(StaticResource.class.getClassLoader().getResourceAsStream("images/bulletU.gif"));
             bulletR = ImageIO.read(StaticResource.class.getClassLoader().getResourceAsStream("images/bulletR.gif"));
             bulletD = ImageIO.read(StaticResource.class.getClassLoader().getResourceAsStream("images/bulletD.gif"));
+
+            for (int i = 0; i < 16; i++) {
+                expose[i] = ImageIO.read(StaticResource.class.getClassLoader().getResourceAsStream("images/e"+(i+1)+".gif"));
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
