@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/dedisn-refactor/dedisn-refactor.iml" filepath="$PROJECT_DIR$/dedisn-refactor/dedisn-refactor.iml" />
       <module fileurl="file://$PROJECT_DIR$/gateway/gateway.iml" filepath="$PROJECT_DIR$/gateway/gateway.iml" />
       <module fileurl="file://$PROJECT_DIR$/nacos-user/nacos-user.iml" filepath="$PROJECT_DIR$/nacos-user/nacos-user.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dedisn-refactor/tank/tank.iml" filepath="$PROJECT_DIR$/dedisn-refactor/tank/tank.iml" />
     </modules>
   </component>
 </project>

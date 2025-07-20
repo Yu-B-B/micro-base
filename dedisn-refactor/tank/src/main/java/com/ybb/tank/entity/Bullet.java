@@ -81,17 +81,19 @@ public class Bullet {
     }
 
     /**
-     * 发生碰撞时
+     * 子弹与坦克碰撞时
      * @param tank
      * @return
      */
     public void intersect(Tank tank) {
+        // 如果自己坦克与自己子弹碰撞，返回
         if(this.group == tank.getGroup()) return;
+        // 双方正营子弹与坦克碰撞
         Rectangle bulletArea = new Rectangle(this.x, this.y, bulletD.getWidth(), bulletD.getHeight());
         Rectangle tankArea = new Rectangle(tank.getX(), tank.getY(), tankD.getWidth(), tankD.getHeight());
         if(bulletArea.intersects(tankArea)) {
-            this.destory();
-            tank.destory();
+            this.destory(); // 子弹移除
+            tank.destory(); // 坦克移除
         }
     }
 }

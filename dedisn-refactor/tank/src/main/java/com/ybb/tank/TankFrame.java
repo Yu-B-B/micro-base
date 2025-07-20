@@ -5,14 +5,13 @@ import com.ybb.tank.content.Direction;
 import com.ybb.tank.content.Group;
 import com.ybb.tank.entity.Bullet;
 import com.ybb.tank.entity.Tank;
+import com.ybb.tank.listener.MainTankListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -27,29 +26,10 @@ import static com.ybb.tank.content.ContentData.MY_TANK_DEFAULT_Y;
 @Slf4j
 public class TankFrame extends Frame {
 
-    Tank mainTank = new Tank(MY_TANK_DEFAULT_X, MY_TANK_DEFAULT_Y, Direction.UP,this, Group.GOOD);
+    Tank mainTank = new Tank(MY_TANK_DEFAULT_X, MY_TANK_DEFAULT_Y, Direction.UP, this, Group.GOOD);
     public List<Tank> elemTank = new ArrayList<>(10);
     public List<Bullet> bullets = new ArrayList<>();
 //    public Bullet bullet = new Bullet(MY_TANK_BULLET_X, MY_TANK_BULLET_Y, Direction.UP);
-
-    private static boolean BL = false;
-    private static boolean BU = false;
-    private static boolean BR = false;
-    private static boolean BD = false;
-
-    public void init(){
-        for (int i = 0; i < 10; i++) {
-            int width = ContentData.SCREEN_WIDTH - ContentData.MY_TANK_SIZE;
-            int height = ContentData.SCREEN_HEIGHT - ContentData.MY_TANK_SIZE;
-            Random random = new Random();
-
-            int iw = random.nextInt(width);
-            int ih = random.nextInt(height);
-
-            elemTank.add(new Tank(20 + i * 90 , 200, Direction.DOWN,this, Group.BAD));
-        }
-    }
-
 
     public TankFrame() {
         setVisible(true);
@@ -57,10 +37,10 @@ public class TankFrame extends Frame {
         setTitle("tank war");
         setResizable(false);
 
-        // 键盘按钮监听，让页面动态刷新
-        addKeyListener(new MyKeyListener());
+        // 监听键盘按钮，控制我方坦克移动
+        addKeyListener(new MainTankListener(mainTank));
 
-        // 关闭窗口监听
+        // 关闭窗口
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -69,14 +49,30 @@ public class TankFrame extends Frame {
         });
     }
 
+    // 初始敌方坦克
+    public void init() {
+        for (int i = 0; i < 10; i++) {
+            int width = ContentData.SCREEN_WIDTH - ContentData.MY_TANK_SIZE;
+            int height = ContentData.SCREEN_HEIGHT - ContentData.MY_TANK_SIZE;
+            Random random = new Random();
+
+            int iw = random.nextInt(width);
+            int ih = random.nextInt(height);
+
+            elemTank.add(new Tank(20 + i * 90, 200, Direction.DOWN, this, Group.BAD));
+        }
+    }
+
     @Override
     public void paint(Graphics g) {
         Color color = g.getColor();
         g.setColor(Color.BLACK);
-        g.drawString("子弹数量"+bullets.size(),10,60);
+        g.drawString("子弹数量" + bullets.size(), 10, 60);
         g.setColor(color);
 
-        mainTank.paint(g); // 主坦
+        // 绘制我方坦克
+        mainTank.paint(g);
+        // 绘制敌方坦克
         for (int i = 0; i < elemTank.size(); i++) {
             elemTank.get(i).paint(g);
         }
@@ -84,76 +80,13 @@ public class TankFrame extends Frame {
             bullets.get(i).paint(g);
         }
 
-        // TODO：一直检查两个块是否存在重合
+        // 碰撞检测，移除敌方坦克
         for (int i = 0; i < bullets.size(); i++) {
             for (int j = 0; j < elemTank.size(); j++) {
                 bullets.get(i).intersect(elemTank.get(j));
             }
         }
 //        bullet.paint(g); // 主坦克子弹
-    }
-
-    private class MyKeyListener extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent e) { // 键盘按下
-            int code = e.getKeyCode();
-            switch (code) {
-                case KeyEvent.VK_W:
-                    BU = true;
-                    break;
-                case KeyEvent.VK_S:
-                    BD = true;
-                    break;
-                case KeyEvent.VK_A:
-                    BL = true;
-                    break;
-                case KeyEvent.VK_D:
-                    BR = true;
-                    break;
-                case KeyEvent.VK_SPACE:
-                    mainTank.fire();
-                    break;
-                default:
-                    break;
-            }
-
-            setTankMainDir();
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) { // 键盘抬起
-            int code = e.getKeyCode();
-            switch (code) {
-                case KeyEvent.VK_W:
-                    BU = false;
-                    break;
-                case KeyEvent.VK_S:
-                    BD = false;
-                    break;
-                case KeyEvent.VK_A:
-                    BL = false;
-                    break;
-                case KeyEvent.VK_D:
-                    BR = false;
-                    break;
-                default:
-                    break;
-            }
-            setTankMainDir();
-        }
-
-        private void setTankMainDir() {
-            if (!BL && !BU && !BR && !BD) {
-                mainTank.setMoving(false);
-            } else {
-                mainTank.setMoving(true);
-                if (BU) mainTank.setDirection(Direction.UP);
-                if (BL) mainTank.setDirection(Direction.LEFT);
-                if (BR) mainTank.setDirection(Direction.RIGHT);
-                if (BD) mainTank.setDirection(Direction.DOWN);
-
-            }
-        }
     }
 
     // 双缓冲解决闪烁问题。先将需要绘制的内容放到缓冲中，在缓冲中绘制完成后一起绘制到画面
@@ -172,4 +105,6 @@ public class TankFrame extends Frame {
         paint(graphics);
         g.drawImage(offectScreenImage, 0, 0, null);
     }
+
+
 }

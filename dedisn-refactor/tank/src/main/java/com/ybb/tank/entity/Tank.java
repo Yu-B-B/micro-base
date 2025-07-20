@@ -15,10 +15,12 @@ import static com.ybb.tank.content.StaticResource.*;
 public class Tank {
     private int x, y;
     private Direction direction = Direction.UP; // 朝向
-    private boolean moving = true; // 是否自动移动
+    // 控制所有坦克移动标识，true自动移动，false不动
+    private boolean moving = true;
     private TankFrame tf = null; // 上层属性
     private boolean live = true; // 是否存活
     private Group group = Group.BAD; // 区分敌我
+    //
     private Random random = new Random();
 
 
@@ -39,7 +41,7 @@ public class Tank {
         if (!live) {
             tf.elemTank.remove(this);
         }
-        ;
+
         switch (direction) {
             case LEFT:
                 g.drawImage(tankL, x, y, null);
@@ -75,6 +77,7 @@ public class Tank {
             default:
                 break;
         }
+        // 敌方坦克打出子弹
         if (random.nextInt(10) > 8) this.fire();
     }
 
