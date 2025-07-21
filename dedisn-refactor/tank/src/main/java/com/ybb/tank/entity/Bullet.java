@@ -1,5 +1,6 @@
 package com.ybb.tank.entity;
 
+import com.ybb.tank.config.PropertiesUtils;
 import com.ybb.tank.content.Direction;
 import com.ybb.tank.TankFrame;
 import com.ybb.tank.content.ContentData;
@@ -66,25 +67,26 @@ public class Bullet {
     }
 
     private void move() {
+        int bulletSpeed = PropertiesUtils.BULLET_SPEED;
         switch (direction) {
             case LEFT:
-                x -= MY_TANK_BULLET_SPEED;
+                x -= bulletSpeed;
                 break;
             case RIGHT:
-                x += MY_TANK_BULLET_SPEED;
+                x += bulletSpeed;
                 break;
             case UP:
-                y -= MY_TANK_BULLET_SPEED;
+                y -= bulletSpeed;
                 break;
             case DOWN:
-                y += MY_TANK_BULLET_SPEED;
+                y += bulletSpeed;
                 break;
             default:
                 break;
         }
         rect.x = x;
         rect.y = y;
-        if (x < 0 || y < 0 || x > ContentData.SCREEN_WIDTH || y > ContentData.SCREEN_HEIGHT) live = false;
+        if (x < 0 || y < 0 || x > PropertiesUtils.SCREEN_WIDTH || y > PropertiesUtils.SCREEN_HEIGHT) live = false;
     }
 
     public void destory() {

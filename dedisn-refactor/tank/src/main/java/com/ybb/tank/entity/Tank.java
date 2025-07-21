@@ -1,5 +1,6 @@
 package com.ybb.tank.entity;
 
+import com.ybb.tank.config.PropertiesUtils;
 import com.ybb.tank.content.Direction;
 import com.ybb.tank.TankFrame;
 import com.ybb.tank.content.Group;
@@ -68,18 +69,19 @@ public class Tank {
 
     private void move() {
         if (!moving) return;
+        int speed = PropertiesUtils.MY_TANK_SPEED;
         switch (direction) {
             case LEFT:
-                x -= MY_TANK_SPEED;
+                x -= speed;
                 break;
             case RIGHT:
-                x += MY_TANK_SPEED;
+                x += speed;
                 break;
             case UP:
-                y -= MY_TANK_SPEED;
+                y -= speed;
                 break;
             case DOWN:
-                y += MY_TANK_SPEED;
+                y += speed;
                 break;
             default:
                 break;
@@ -108,8 +110,8 @@ public class Tank {
         if(x < 0) { x = 0; touch = true; }
         // y轴要减去上面的状态栏
         if(y < 30) { y = 30; touch = true; }
-        if(x > SCREEN_WIDTH - WIDTH) { x = SCREEN_WIDTH - WIDTH; touch = true; }
-        if(y > SCREEN_HEIGHT - HEIGHT) { y = SCREEN_HEIGHT - HEIGHT; touch = true; }
+        if(x > PropertiesUtils.SCREEN_WIDTH - WIDTH) { x = PropertiesUtils.SCREEN_WIDTH - WIDTH; touch = true; }
+        if(y > PropertiesUtils.SCREEN_HEIGHT - HEIGHT) { y = PropertiesUtils.SCREEN_HEIGHT - HEIGHT; touch = true; }
         if(touch) {
             Direction[] directions = Direction.values();
             Direction oldDir = this.direction;

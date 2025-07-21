@@ -1,5 +1,6 @@
 package com.ybb.tank;
 
+import com.ybb.tank.config.PropertiesUtils;
 import com.ybb.tank.content.ContentData;
 import com.ybb.tank.content.Direction;
 import com.ybb.tank.content.Group;
@@ -19,23 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.ybb.tank.content.ContentData.SCREEN_HEIGHT;
-import static com.ybb.tank.content.ContentData.SCREEN_WIDTH;
-import static com.ybb.tank.content.ContentData.MY_TANK_DEFAULT_X;
-import static com.ybb.tank.content.ContentData.MY_TANK_DEFAULT_Y;
 
 @Slf4j
 public class TankFrame extends Frame {
 
-    Tank mainTank = new Tank(MY_TANK_DEFAULT_X, MY_TANK_DEFAULT_Y, Direction.UP, this, Group.GOOD);
+    Tank mainTank = new Tank(PropertiesUtils.MY_TANK_DEFAULT_X, PropertiesUtils.MY_TANK_DEFAULT_Y, Direction.UP, this, Group.GOOD);
     public List<Tank> enemyTanks = new ArrayList<>(10);
     public List<Bullet> bullets = new ArrayList<>();
     public List<Expose> exposes = new ArrayList<>();
 
+
     public TankFrame() {
         setVisible(true);
-        setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-        setTitle("tank war");
+        setSize(PropertiesUtils.SCREEN_WIDTH, PropertiesUtils.SCREEN_HEIGHT);
+        setTitle(PropertiesUtils.SCREEN_TITLE);
         setResizable(false);
 
         // 监听键盘按钮，控制我方坦克移动
@@ -52,8 +50,8 @@ public class TankFrame extends Frame {
 
     public void init() {
         for (int i = 0; i < 10; i++) {
-            int width = ContentData.SCREEN_WIDTH - ContentData.MY_TANK_SIZE;
-            int height = ContentData.SCREEN_HEIGHT - ContentData.MY_TANK_SIZE;
+            int width = PropertiesUtils.SCREEN_WIDTH - ContentData.MY_TANK_SIZE;
+            int height = PropertiesUtils.SCREEN_HEIGHT - ContentData.MY_TANK_SIZE;
             Random random = new Random();
 
             int iw = random.nextInt(width);
@@ -102,12 +100,12 @@ public class TankFrame extends Frame {
     @Override
     public void update(Graphics g) {
         if (offectScreenImage == null) {
-            offectScreenImage = this.createImage(SCREEN_WIDTH, SCREEN_HEIGHT);
+            offectScreenImage = this.createImage(PropertiesUtils.SCREEN_WIDTH, PropertiesUtils.SCREEN_HEIGHT);
         }
         Graphics graphics = offectScreenImage.getGraphics();
         Color color = graphics.getColor();
         graphics.setColor(Color.BLACK); // 只是对当前对象重新创建颜色，设置后将颜色回滚到之前的样式
-        graphics.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        graphics.fillRect(0, 0, PropertiesUtils.SCREEN_WIDTH, PropertiesUtils.SCREEN_HEIGHT);
         graphics.setColor(color);
         paint(graphics);
         g.drawImage(offectScreenImage, 0, 0, null);
