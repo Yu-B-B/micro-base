@@ -4,6 +4,9 @@ import com.ybb.tank.config.PropertiesUtils;
 import com.ybb.tank.content.Direction;
 import com.ybb.tank.TankFrame;
 import com.ybb.tank.content.Group;
+import com.ybb.tank.strategy.DefaultFireStrategyImpl;
+import com.ybb.tank.strategy.FireStrategy;
+import com.ybb.tank.strategy.FourDirectionFireStrategyImpl;
 import lombok.Data;
 
 import java.awt.*;
@@ -14,18 +17,20 @@ import static com.ybb.tank.content.StaticResource.*;
 
 @Data
 public class Tank {
-    private int x, y;
-    private Direction direction = Direction.UP; // 朝向
+    public int x, y;
+    public Direction direction = Direction.UP; // 朝向
     // 控制所有坦克移动标识，true自动移动，false不动
     private boolean moving = true;
-    private TankFrame tf = null; // 上层属性
+    public TankFrame tf = null; // 上层属性
     private boolean live = true; // 是否存活
-    private Group group = Group.BAD; // 区分敌我
+    public Group group = Group.BAD; // 区分敌我
     private Random random = new Random();
-    private static int WIDTH = TANK_WIDTH;
-    private static int HEIGHT = TANK_HEIGHT;
+    public int WIDTH = TANK_WIDTH;
+    public int HEIGHT = TANK_HEIGHT;
 
     public Rectangle tankRect = new Rectangle();
+
+    FireStrategy fireStrategy = new FourDirectionFireStrategyImpl();
 
     public Tank(int x, int y, Direction direction, TankFrame tankFrame, Group group) {
         this.x = x;
@@ -98,7 +103,6 @@ public class Tank {
             }
             checkBorder();
         }
-
     }
 
     /**
@@ -125,9 +129,9 @@ public class Tank {
     }
 
     public void fire() {
-        int bx = x + WIDTH / 2 - TANK_BULLET_WIDTH / 2;
-        int by = y + HEIGHT / 2 - TANK_BULLET_HEIGHT / 2;
-        tf.bullets.add(new Bullet(bx, by, direction, this.tf, this.group));
+        // fire使用策略模式调用，当策略类作为参数传递时，需要写为单例模式
+        // 或者将使用的策略模式写在当前的类中
+        fireStrategy.fire(this);
     }
 
     public void destory() {
