@@ -11,11 +11,21 @@
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/common/pom.xml" />
+        <option value="$PROJECT_DIR$/dedisn-refactor/pom.xml" />
+        <option value="$PROJECT_DIR$/demo-deal/pom.xml" />
+        <option value="$PROJECT_DIR$/eurekamodle/pom.xml" />
+        <option value="$PROJECT_DIR$/nacos-order/pom.xml" />
+        <option value="$PROJECT_DIR$/nacos-product/pom.xml" />
+        <option value="$PROJECT_DIR$/nacos-user/pom.xml" />
         <option value="$PROJECT_DIR$/nacos-user2/pom.xml" />
+        <option value="$PROJECT_DIR$/ordermoudle/pom.xml" />
+        <option value="$PROJECT_DIR$/redis/pom.xml" />
+        <option value="$PROJECT_DIR$/usermodule/pom.xml" />
       </set>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_23" project-jdk-name="23" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ProjectType">

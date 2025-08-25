@@ -7,22 +7,24 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="usermodule" />
-        <module name="nacos-product" />
-        <module name="ordermoudle" />
-        <module name="eurekamodle" />
-        <module name="common" />
-        <module name="nacos-user" />
-        <module name="demo-deal" />
-        <module name="tank" />
-        <module name="redis" />
-        <module name="nacos-order" />
-        <module name="base" />
+        <module name="nacos" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="base" target="1.8" />
+      <module name="common" target="1.8" />
+      <module name="dedisn-refactor" target="1.8" />
+      <module name="demo-deal" target="1.8" />
+      <module name="eurekamodle" target="1.8" />
       <module name="gateway" target="17" />
+      <module name="nacos-order" target="1.8" />
+      <module name="nacos-product" target="1.8" />
+      <module name="nacos-user" target="1.8" />
       <module name="nacos-user2" target="1.8" />
+      <module name="ordermoudle" target="1.8" />
+      <module name="redis" target="1.8" />
+      <module name="tank" target="1.8" />
+      <module name="usermodule" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -32,6 +34,7 @@
       <module name="demo-deal" options="-parameters" />
       <module name="eurekamodle" options="-parameters" />
       <module name="gateway" options="-parameters" />
+      <module name="nacos" options="-parameters" />
       <module name="nacos-order" options="-parameters" />
       <module name="nacos-product" options="-parameters" />
       <module name="nacos-user" options="-parameters" />
