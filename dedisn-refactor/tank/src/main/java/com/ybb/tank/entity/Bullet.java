@@ -110,7 +110,7 @@ public class Bullet {
             // 爆炸
             int ex = tank.getX() + TANK_WIDTH / 2 - Expose.WIDTH / 2;
             int ey = tank.getY() + TANK_HEIGHT / 2 - Expose.HEIGHT / 2;
-            tf.exposes.add(new Expose(ex, ey, tf));
+            tf.exposes.add(tf.gf.createExplode(ex, ey, tf));
         }
     }
 }

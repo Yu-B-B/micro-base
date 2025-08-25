@@ -1,12 +1,11 @@
-package com.ybb.tank.entity;
+package com.ybb.abstractfactory;
 
-import com.ybb.abstractfactory.BaseExplode;
 import com.ybb.tank.TankFrame;
 import com.ybb.tank.content.StaticResource;
 
 import java.awt.*;
 
-public class Expose extends BaseExplode {
+public class RectExposed extends BaseExplode{
     public static int WIDTH = StaticResource.expose[0].getWidth();
     public static int HEIGHT = StaticResource.expose[0].getHeight();
     private int x, y;
@@ -15,7 +14,7 @@ public class Expose extends BaseExplode {
     private TankFrame tf = null;
 
 
-    public Expose(int x, int y,  TankFrame tf) {
+    public RectExposed(int x, int y,  TankFrame tf) {
         this.x = x;
         this.y = y;
         this.tf = tf;
@@ -33,5 +32,4 @@ public class Expose extends BaseExplode {
             tf.exposes.remove(this);
         }
     }
-
 }

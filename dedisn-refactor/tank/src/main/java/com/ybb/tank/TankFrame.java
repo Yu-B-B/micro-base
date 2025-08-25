@@ -1,5 +1,9 @@
 package com.ybb.tank;
 
+import com.ybb.abstractfactory.BaseExplode;
+import com.ybb.abstractfactory.DefaultFactory;
+import com.ybb.abstractfactory.GameFactory;
+import com.ybb.abstractfactory.RectFactory;
 import com.ybb.tank.config.PropertiesUtils;
 import com.ybb.tank.content.ContentData;
 import com.ybb.tank.content.Direction;
@@ -27,8 +31,9 @@ public class TankFrame extends Frame {
     Tank mainTank = new Tank(PropertiesUtils.MY_TANK_DEFAULT_X, PropertiesUtils.MY_TANK_DEFAULT_Y, Direction.UP, this, Group.GOOD);
     public List<Tank> enemyTanks = new ArrayList<>(10);
     public List<Bullet> bullets = new ArrayList<>();
-    public List<Expose> exposes = new ArrayList<>();
+    public List<BaseExplode> exposes = new ArrayList<>();
 
+    public GameFactory gf = new RectFactory();
 
     public TankFrame() {
         setVisible(true);

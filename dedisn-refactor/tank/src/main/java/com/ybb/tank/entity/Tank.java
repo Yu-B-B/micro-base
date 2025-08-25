@@ -1,8 +1,9 @@
 package com.ybb.tank.entity;
 
+import com.ybb.abstractfactory.BaseTank;
+import com.ybb.tank.TankFrame;
 import com.ybb.tank.config.PropertiesUtils;
 import com.ybb.tank.content.Direction;
-import com.ybb.tank.TankFrame;
 import com.ybb.tank.content.Group;
 import com.ybb.tank.strategy.DefaultFireStrategyImpl;
 import com.ybb.tank.strategy.FireStrategy;
@@ -12,11 +13,12 @@ import lombok.Data;
 import java.awt.*;
 import java.util.Random;
 
-import static com.ybb.tank.content.ContentData.*;
+import static com.ybb.tank.content.ContentData.TANK_HEIGHT;
+import static com.ybb.tank.content.ContentData.TANK_WIDTH;
 import static com.ybb.tank.content.StaticResource.*;
 
 @Data
-public class Tank {
+public class Tank extends BaseTank {
     public int x, y;
     public Direction direction = Direction.UP; // 朝向
     // 控制所有坦克移动标识，true自动移动，false不动
@@ -30,7 +32,7 @@ public class Tank {
 
     public Rectangle tankRect = new Rectangle();
 
-    FireStrategy fireStrategy = new FourDirectionFireStrategyImpl();
+    FireStrategy fireStrategy;
 
     public Tank(int x, int y, Direction direction, TankFrame tankFrame, Group group) {
         this.x = x;
@@ -43,6 +45,12 @@ public class Tank {
         tankRect.y = y;
         tankRect.width = WIDTH;
         tankRect.height = HEIGHT;
+
+        if(Group.GOOD.equals(group)) {
+            fireStrategy = new FourDirectionFireStrategyImpl();
+        }else {
+            fireStrategy = new DefaultFireStrategyImpl();
+        }
     }
 
     /**
