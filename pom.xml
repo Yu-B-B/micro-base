@@ -15,6 +15,7 @@
     <description>cloud-demo</description>
     <modules>
         <module>nacos</module>
+        <module>sentinel-service</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
